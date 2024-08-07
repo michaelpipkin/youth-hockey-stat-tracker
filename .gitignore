@@ -1,4 +1,4 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
 /dist
@@ -36,7 +36,20 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+*.sqlite
+*.vsidx
+src/app/firebase.config.ts
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Firestore emulators
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+seed-data
+seed-data.ts
+.firebase/hosting.*
+
+
