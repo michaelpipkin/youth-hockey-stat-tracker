@@ -1,16 +1,16 @@
-import { Goalie } from '@shared/enums';
+import { Gender, Goalie } from '@shared/enums';
+import { Guardian } from './guardian';
+import { Player } from './player';
 
 export interface ITeam {
   id: string;
   name: string;
   description: string;
-  players: [
-    {
-      playerId: string;
-      jerseyNumber: string;
-      goalie: Goalie;
-    }
-  ];
+  players: [Player];
+  headCoach: Guardian;
+  assistantCoach1: Guardian;
+  assistantCoach2: Guardian;
+  manager: Guardian;
 }
 
 export class Team implements ITeam {
@@ -20,14 +20,15 @@ export class Team implements ITeam {
   public id: string;
   public name: string;
   public description: string;
-  public players: [
-    {
-      playerId: string;
-      jerseyNumber: string;
-      goalie: Goalie;
-    }
-  ];
-  public hasGoalie(): boolean {
+  public players: [Player];
+  public headCoach: Guardian;
+  public assistantCoach1: Guardian;
+  public assistantCoach2: Guardian;
+  public manager: Guardian;
+  public get hasGoalie(): boolean {
     return this.players.some((player) => player.goalie === Goalie.Y);
+  }
+  public get femalePlayerCount(): number {
+    return this.players.filter((player) => player.gender === Gender.F).length;
   }
 }

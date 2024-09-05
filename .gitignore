@@ -53,3 +53,8 @@ seed-data.ts
 .firebase/hosting.*
 
 
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>Edit Programs</h1>
+<mat-dialog-content>
+  <div class="content pt-3">
+    <mat-form-field id="program-select">
+      <mat-label>Select Program</mat-label>
+      <mat-select
+        [(ngModel)]="selectedProgram"
+        name="program"
+        (selectionChange)="onSelectProgram()"
+      >
+        @for (program of userPrograms(); track program.id) {
+        <mat-option [value]="program">{{ program.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <form [formGroup]="editProgramForm">
+    <div class="content">
+      <mat-form-field appearance="fill">
+        <mat-label>Program name</mat-label>
+        <input matInput formControlName="name" />
+        @if (f.name.errors?.['required']) {
+        <mat-error> *Required </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Program description</mat-label>
+        <input matInput formControlName="description" />
+        <mat-hint>Optional</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    type="submit"
+    defaultButton
+    mat-flat-button
+    [disabled]="!editProgramForm.valid"
+    (click)="onSubmit()"
+  >
+    Save
+  </button>
+  <button mat-stroked-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

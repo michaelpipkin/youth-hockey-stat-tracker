@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Confirm {{ operation() }}</h1>
+<mat-dialog-content>
+  <p>
+    WARNING! This action cannot be undone. Are you sure you want to
+    {{ operation().toLowerCase() }} {{ target() }}?
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button [mat-dialog-close]="true">
+    {{ operation() }}
+  </button>
+  <button mat-stroked-button [mat-dialog-close]="false">Cancel</button>
+</mat-dialog-actions>

@@ -1,4 +1,4 @@
-import { Gender, Goalie, TShirtSize } from '@shared/enums';
+import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
 import { IAddress } from './address';
 import { IGuardian } from './guardian';
 
@@ -8,9 +8,12 @@ export interface IPlayer {
   lastName: string;
   gender: Gender;
   birthDate: Date;
-  addresses: IAddress[];
+  address: IAddress;
   guardians: IGuardian[];
+  tryoutNumber: string;
   jerseyNumber: string;
+  evaluationScore: number;
+  totalLooks: number;
   tShirtSize: TShirtSize;
   goalie: Goalie;
   programId: string;
@@ -29,9 +32,12 @@ export class Player implements IPlayer {
   public lastName: string;
   public gender: Gender;
   public birthDate: Date;
-  public addresses: IAddress[];
+  public address: IAddress;
   public guardians: IGuardian[];
+  public tryoutNumber: string;
   public jerseyNumber: string;
+  public evaluationScore: number;
+  public totalLooks: number;
   public tShirtSize: TShirtSize;
   public goalie: Goalie;
   public programId: string;
@@ -51,5 +57,11 @@ export class Player implements IPlayer {
   }
   public get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
+  }
+  public get lastFirstName(): string {
+    return `${this.lastName}, ${this.firstName}`;
+  }
+  public get parentCoach(): boolean {
+    return this.guardians.some((guardian) => guardian.coachManager !== Coach.N);
   }
 }

@@ -1,9 +1,14 @@
 {
   "name": "youth-hockey-stat-tracker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "kill-ports": "npx kill-port 4000 && npx kill-port 4500 && npx kill-port 5000 && npx kill-port 8080 && npx kill-port 9099 && npx kill-port 9150 && npx kill-port 9199",
+    "export-data": "rm seed-data -r -f && firebase emulators:export seed-data",
+    "local-dev": "firebase emulators:start --import seed-data",
+    "get-indexes": "firebase firestore:indexes",
+    "build:prod": "npm --no-git-tag-version version patch && node ./setBuildDate.js && ng build --configuration=production",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -15,11 +20,14 @@
     "@angular/common": "^18.2.0",
     "@angular/compiler": "^18.2.0",
     "@angular/core": "^18.2.0",
+    "@angular/fire": "^18.0.1",
     "@angular/forms": "^18.2.0",
     "@angular/material": "^18.2.0",
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "bootstrap": "^5.2.3",
+    "firebaseui": "^6.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

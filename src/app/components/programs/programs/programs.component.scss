@@ -1,0 +1,21 @@
+.container {
+  width: 360px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4px;
+}
+
+#program-select {
+  width: 272px;
+}
+
+.description {
+  display: grid;
+  width: 100%;
+  padding-left: 21px;
+  justify-items: start;
+  margin-bottom: 8px;
+}

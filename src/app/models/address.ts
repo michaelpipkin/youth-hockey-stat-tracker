@@ -1,5 +1,4 @@
 export interface IAddress {
-  id: string;
   street1: string;
   street2: string;
   city: string;
@@ -11,7 +10,6 @@ export class Address implements IAddress {
   constructor(init?: Partial<Address>) {
     Object.assign(this, init);
   }
-  public id: string;
   public street1: string;
   public street2: string;
   public city: string;

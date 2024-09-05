@@ -1,0 +1,15 @@
+<table #table>
+  <tbody>
+    @for (row of data(); track trackByIndex; let i = $index) {
+    <tr>
+      <td
+        contenteditable="true"
+        (keydown)="onKeyDown($event, i)"
+        (input)="onCellInput($event, i)"
+      >
+        {{ cell }}
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>

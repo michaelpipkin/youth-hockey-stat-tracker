@@ -22,3 +22,17 @@ export enum Goalie {
   N = 'No',
   M = 'Maybe',
 }
+
+export enum Coach {
+  N = 'No',
+  HC = 'Head Coach',
+  AC = 'Assistant Coach',
+  M = 'Manager',
+}
+
+export enum EvaluationCategory {
+  SK = 'Skating',
+  PC = 'Puck Control',
+  SH = 'Shooting',
+  GP = 'Game Play',
+}

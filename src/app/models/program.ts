@@ -1,14 +1,14 @@
-import { Evaluation } from './evaluation';
-import { Team } from './team';
+import { IEvaluation } from './evaluation';
+import { ITeam } from './team';
 
 export interface IProgram {
   id: string;
+  ownerId: string;
   name: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
-  teams: Team[];
-  evaluations: Evaluation[];
+  active: boolean;
+  teams: ITeam[];
+  evaluations: IEvaluation[];
 }
 
 export class Program implements IProgram {
@@ -16,10 +16,10 @@ export class Program implements IProgram {
     Object.assign(this, init);
   }
   public id: string;
+  public ownerId: string;
   public name: string;
   public description: string;
-  public startDate: Date;
-  public endDate: Date;
-  public teams: Team[];
-  public evaluations: Evaluation[];
+  public active: boolean;
+  public teams: ITeam[];
+  public evaluations: IEvaluation[];
 }

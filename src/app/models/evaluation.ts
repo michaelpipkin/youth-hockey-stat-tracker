@@ -1,11 +1,12 @@
+import { EvaluationCategory } from '@shared/enums';
+
 export interface IEvaluation {
   id: string;
   evaluatorName: string;
-  playerId: string;
-  skatingScore: number;
-  puckControlScore: number;
-  shootingScore: number;
-  gamePlayScore: number;
+  evaluationDate: Date;
+  scores: [
+    { category: EvaluationCategory; tryoutNumber: string; score: number }
+  ];
 }
 
 export class Evaluation implements IEvaluation {
@@ -14,9 +15,20 @@ export class Evaluation implements IEvaluation {
   }
   public id: string;
   public evaluatorName: string;
-  public playerId: string;
-  public skatingScore: number;
-  public puckControlScore: number;
-  public shootingScore: number;
-  public gamePlayScore: number;
+  public evaluationDate: Date;
+  public scores: [
+    { category: EvaluationCategory; tryoutNumber: string; score: number }
+  ];
+}
+
+export class EvaluationResult {
+  constructor() {
+    this.totalLooks = 0;
+    this.totalScore = 0;
+  }
+  public totalLooks: number;
+  public totalScore: number;
+  public get averageScore(): number {
+    return this.totalScore / this.totalLooks;
+  }
 }
