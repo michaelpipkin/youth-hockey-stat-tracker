@@ -1,4 +1,5 @@
 export enum TShirtSize {
+  U = 'Unknown',
   YXS = 'Youth Extra Small',
   YS = 'Youth Small',
   YM = 'Youth Medium',

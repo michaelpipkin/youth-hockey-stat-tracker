@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { HelpComponent } from '@components/help/help.component';
 import { Program } from '@models/program';
 import { ProgramService } from '@services/program.service';
@@ -32,6 +33,7 @@ import {
     MatIconModule,
     MatButtonModule,
     MatInputModule,
+    MatTooltipModule,
   ],
   templateUrl: './programs.component.html',
   styleUrl: './programs.component.scss',
@@ -70,7 +72,7 @@ export class ProgramsComponent {
   }
 
   onSelectProgram(e: MatSelectChange): void {
-    this.programService.setActiveProgram(e.value);
+    this.programService.setActiveProgram(this.#user().uid, e.value);
   }
 
   addProgram(): void {

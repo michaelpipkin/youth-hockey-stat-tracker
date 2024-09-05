@@ -1,4 +1,5 @@
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
+import { Timestamp } from 'firebase/firestore';
 import { IAddress } from './address';
 import { IGuardian } from './guardian';
 
@@ -7,7 +8,7 @@ export interface IPlayer {
   firstName: string;
   lastName: string;
   gender: Gender;
-  birthDate: Date;
+  birthDate: Timestamp;
   address: IAddress;
   guardians: IGuardian[];
   tryoutNumber: string;
@@ -18,7 +19,7 @@ export interface IPlayer {
   goalie: Goalie;
   programId: string;
   teamId: string;
-  usaHockeyConfirmationNumber: string;
+  usaHockeyNumber: string;
   importantInfo: string;
   active: boolean;
 }
@@ -31,7 +32,7 @@ export class Player implements IPlayer {
   public firstName: string;
   public lastName: string;
   public gender: Gender;
-  public birthDate: Date;
+  public birthDate: Timestamp;
   public address: IAddress;
   public guardians: IGuardian[];
   public tryoutNumber: string;
@@ -42,12 +43,12 @@ export class Player implements IPlayer {
   public goalie: Goalie;
   public programId: string;
   public teamId: string;
-  public usaHockeyConfirmationNumber: string;
+  public usaHockeyNumber: string;
   public importantInfo: string;
   public active: boolean;
   public get age(): number {
     const today = new Date();
-    const birthDate = new Date(this.birthDate);
+    const birthDate = new Date(this.birthDate.toDate());
     let age = today.getFullYear() - birthDate.getFullYear();
     const m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {

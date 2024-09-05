@@ -166,10 +166,27 @@ mat-dialog-actions {
   height: 30px;
   width: 30px;
   mat-icon {
-    color: mat.get-theme-color(theme.$light-theme, secondary, 40) !important;
+    color: mat.get-theme-color(theme.$light-theme, primary, 40) !important;
     font-size: 30px;
     height: 30px;
     width: 30px;
+    cursor: pointer;
+
+    &:hover {
+      color: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
+    }
+  }
+}
+
+mat-icon.mat-icon-button {
+  color: mat.get-theme-color(theme.$light-theme, primary, 40) !important;
+  font-size: 30px;
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+
+  &:hover {
+    color: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
   }
 }
 
@@ -208,6 +225,10 @@ mat-dialog-actions {
   cursor: pointer;
 }
 
+.no-wrap {
+  white-space: nowrap;
+}
+
 .datepicker {
   max-width: 152px;
 }
@@ -217,13 +238,34 @@ mat-dialog-actions {
 }
 
 .gender-select {
-  max-width: 140px;
+  width: 140px;
+}
+
+.address {
+  width: 300px;
 }
 
 .state {
-  max-width: 74px;
+  width: 74px;
 }
 
 .zip-code {
-  max-width: 92px;
+  width: 92px;
+}
+
+.phone-number {
+  width: 140px;
+}
+
+.name {
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.coach {
+  width: 162px;
+}
+
+.goalie-select {
+  width: 140px;
 }

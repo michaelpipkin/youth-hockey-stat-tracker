@@ -127,7 +127,7 @@ export class PlayersComponent {
     const dialogConfig: MatDialogConfig = {
       data: {
         user: this.#user(),
-        programId: this.currentProgram().id,
+        program: this.currentProgram(),
       },
     };
     const dialogRef = this.dialog.open(CreatePlayerComponent, dialogConfig);

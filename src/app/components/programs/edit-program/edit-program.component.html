@@ -33,13 +33,12 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button
-    type="submit"
-    defaultButton
     mat-flat-button
+    type="submit"
     [disabled]="!editProgramForm.valid"
     (click)="onSubmit()"
   >
     Save
   </button>
-  <button mat-stroked-button mat-dialog-close>Cancel</button>
+  <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
 </mat-dialog-actions>

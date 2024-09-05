@@ -58,7 +58,7 @@ export class AddProgramComponent {
       ownerId: this.user.uid,
       name: formValues.name,
       description: formValues.description,
-      active: false,
+      active: this.programService.userPrograms().length === 0,
     };
     this.programService
       .addProgram(newProgram)

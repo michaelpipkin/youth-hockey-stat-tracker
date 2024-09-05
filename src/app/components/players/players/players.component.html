@@ -56,18 +56,22 @@
       (matSortChange)="sortPlayers($event)"
     >
       @let columnsToDisplay = ['firstName', 'lastName', 'gender', 'age',
-      'tryoutNumber', 'jerseyNumber', 'evalScore', 'looks', 'goalie', 'team',
-      'usaHockeyNumber', 'active'];
+      'tryoutNumber', 'jerseyNumber', 'evalScore', 'looks', 'team',
+      'usaHockeyNumber', 'goalie', 'parentCoach', 'active'];
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Id</th>
         <td mat-cell *matCellDef="let player">{{ player.id }}</td>
       </ng-container>
       <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          First<br />Name
+        </th>
         <td mat-cell *matCellDef="let player">{{ player.firstName }}</td>
       </ng-container>
       <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Last<br />Name
+        </th>
         <td mat-cell *matCellDef="let player">{{ player.lastName }}</td>
       </ng-container>
       <ng-container matColumnDef="gender">
@@ -75,22 +79,22 @@
         <td mat-cell *matCellDef="let player">{{ player.gender }}</td>
       </ng-container>
       <ng-container matColumnDef="age">
-        <th mat-header-cell *matHeaderCellDef>DoB/Age</th>
-        <td mat-cell *matCellDef="let player">
-          {{ player.birthDate | date : "yyyy-MM-dd" }}({{ player.age }})
+        <th mat-header-cell *matHeaderCellDef>DoB (Age)</th>
+        <td mat-cell *matCellDef="let player" class="no-wrap">
+          {{ player.birthDate.toDate() | date : "M/d/yyyy" }} ({{ player.age }})
         </td>
       </ng-container>
       <ng-container matColumnDef="tryoutNumber">
-        <th mat-header-cell *matHeaderCellDef>Tryout Number</th>
+        <th mat-header-cell *matHeaderCellDef>Tryout<br />Number</th>
         <td mat-cell *matCellDef="let player">{{ player.tryoutNumber }}</td>
       </ng-container>
       <ng-container matColumnDef="jerseyNumber">
-        <th mat-header-cell *matHeaderCellDef>Jersey Number</th>
+        <th mat-header-cell *matHeaderCellDef>Jersey<br />Number</th>
         <td mat-cell *matCellDef="let player">{{ player.jerseyNumber }}</td>
       </ng-container>
       <ng-container matColumnDef="evalScore">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Evaluation Score
+          Evaluation<br />Score
         </th>
         <td mat-cell *matCellDef="let player">{{ player.evalScore }}</td>
       </ng-container>
@@ -109,8 +113,14 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="usaHockeyNumber">
-        <th mat-header-cell *matHeaderCellDef>USA Hockey Number</th>
+        <th mat-header-cell *matHeaderCellDef>USA Hockey<br />Number</th>
         <td mat-cell *matCellDef="let player">{{ player.usaHockeyNumber }}</td>
+      </ng-container>
+      <ng-container matColumnDef="parentCoach">
+        <th mat-header-cell *matHeaderCellDef>Parent<br />Coach</th>
+        <td mat-cell *matCellDef="let player">
+          {{ player.parentCoach | yesNo }}
+        </td>
       </ng-container>
       <ng-container matColumnDef="active">
         <th mat-header-cell *matHeaderCellDef>Active</th>

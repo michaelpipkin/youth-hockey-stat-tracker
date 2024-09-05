@@ -2,6 +2,9 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Guardian } from '@models/guardian';
 import { Program } from '@models/program';
 import { Coach } from '@shared/enums';
+import { EvaluationService } from './evaluation.service';
+import { PlayerService } from './player.service';
+import { TeamService } from './team.service';
 import {
   addDoc,
   collection,
@@ -23,11 +26,23 @@ import {
 })
 export class ProgramService {
   fs = inject(Firestore);
+  playerService = inject(PlayerService);
+  teamService = inject(TeamService);
+  evaluationService = inject(EvaluationService);
 
   userPrograms = signal<Program[]>([]);
   currentProgramCoaches = signal<Guardian[]>([]);
 
-  activeUserProgram = computed(() => this.userPrograms().find((p) => p.active));
+  activeUserProgram = computed(() => {
+    const activeProgram = this.userPrograms().find((p) => p.active);
+    if (!activeProgram) {
+      return null;
+    }
+    this.playerService.getProgramPlayers(activeProgram.id);
+    this.teamService.getProgramTeams(activeProgram.id);
+    this.evaluationService.getEvaluations(activeProgram.id);
+    return activeProgram;
+  });
 
   getUserPrograms(userId: string): void {
     const programQuery = query(
@@ -96,7 +111,7 @@ export class ProgramService {
     });
   }
 
-  async setActiveProgram(programId: string): Promise<any> {
+  async setActiveProgram(userId: string, programId: string): Promise<any> {
     const batch = writeBatch(this.fs);
     const program = await getDoc(doc(this.fs, `programs/${programId}`));
     if (!program.exists) {
@@ -104,6 +119,7 @@ export class ProgramService {
     }
     const q = query(
       collection(this.fs, 'programs'),
+      where('ownerId', '==', userId),
       where('active', '==', true)
     );
     await getDocs(q).then((snapshot) => {
