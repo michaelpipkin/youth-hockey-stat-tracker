@@ -146,6 +146,7 @@ export class CreatePlayerComponent {
       importantInfo: formValues.importantInfo,
       guardians: guardians,
       programId: formValues.addToProgram ? this.program.id : '',
+      teamId: '',
       active: true,
     };
     this.playerService

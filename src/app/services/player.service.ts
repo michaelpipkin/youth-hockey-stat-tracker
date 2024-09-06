@@ -28,7 +28,7 @@ export class PlayerService {
   async getProgramPlayers(programId: string): Promise<void> {
     const playerQuery = query(
       collection(this.fs, `players`),
-      where('programId', '==', programId),
+      where('programId', 'in', [programId, '']),
       orderBy('lastName', 'asc'),
       orderBy('firstName', 'asc')
     );
@@ -131,7 +131,7 @@ export class PlayerService {
     );
     await getDocs(playerQuery).then((snapshot) => {
       snapshot.docs.forEach((doc) => {
-        batch.update(doc.ref, { programId: null, teamId: null });
+        batch.update(doc.ref, { programId: '', teamId: '' });
       });
     });
     return await batch
@@ -152,7 +152,7 @@ export class PlayerService {
     );
     await getDocs(playerQuery).then((snapshot) => {
       snapshot.docs.forEach((doc) => {
-        batch.update(doc.ref, { teamId: null });
+        batch.update(doc.ref, { teamId: '' });
       });
     });
     return await batch

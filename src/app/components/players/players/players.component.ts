@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Analytics } from '@angular/fire/analytics';
+import { Analytics, logEvent } from '@angular/fire/analytics';
 import { User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,9 +23,9 @@ import { ProgramService } from '@services/program.service';
 import { SortingService } from '@services/sorting.service';
 import { TeamService } from '@services/team.service';
 import { UserService } from '@services/user.service';
+import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { ClearSelectDirective } from '@shared/directives/clear-select.directive';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
-import { AddPlayersComponent } from '../add-players/add-players.component';
 import { CreatePlayerComponent } from '../create-player/create-player.component';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
 import {
@@ -34,6 +35,7 @@ import {
   model,
   signal,
   Signal,
+  viewChildren,
 } from '@angular/core';
 
 @Component({
@@ -51,6 +53,7 @@ import {
     MatInputModule,
     MatTableModule,
     MatSortModule,
+    MatCheckboxModule,
     DatePipe,
     YesNoPipe,
     ClearSelectDirective,
@@ -71,30 +74,41 @@ export class PlayersComponent {
   #user: Signal<User> = this.userService.user;
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
+  programs: Signal<Program[]> = this.programService.userPrograms;
+  activePrograms = computed(() => this.programs().filter((p) => p.active));
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
 
   sortField = signal<string>('lastFirstName');
   sortAsc = signal<boolean>(true);
 
   nameFilter = model<string>('');
-  activeOnly = model<boolean>(true);
+  showUnassigned = model<boolean>(false);
   selectedTeamId = model<string>('');
+
+  assignCheckboxes = viewChildren<MatCheckbox>('assignCheckbox');
 
   filteredPlayers = computed(
     (
       nameFilter: string = this.nameFilter(),
-      activeOnly: boolean = this.activeOnly(),
+      showUnassigned: boolean = this.showUnassigned(),
       selectedTeamId: string = this.selectedTeamId()
     ) => {
-      return this.players().filter((player) => {
+      let players = this.players().filter((player) => {
         return (
           (!nameFilter ||
             player.firstName.toLowerCase().includes(nameFilter) ||
             player.lastName.toLowerCase().includes(nameFilter)) &&
-          (!activeOnly || player.active) &&
-          (!selectedTeamId || player.teamId === selectedTeamId)
+          (showUnassigned || player.programId !== '') &&
+          (!selectedTeamId ||
+            (selectedTeamId === '0'
+              ? !player.teamId
+              : player.teamId === selectedTeamId))
         );
       });
+      if (players.length > 0) {
+        players = this.sorter.sort(players, this.sortField(), this.sortAsc());
+      }
+      return players;
     }
   );
   playerCount = computed(() => this.filteredPlayers().length);
@@ -104,8 +118,24 @@ export class PlayersComponent {
     this.sortAsc.set(e.direction == 'asc');
   }
 
+  getProgramName(programId: string): string {
+    return (
+      this.programs().find((program) => program.id === programId)?.name ?? ''
+    );
+  }
+
   getTeamName(teamId: string): string {
     return this.teams().find((team) => team.id === teamId)?.name ?? '';
+  }
+
+  getCheckedPlayers(): string[] {
+    const checkedPlayers: string[] = [];
+    this.assignCheckboxes().forEach((checkbox, index) => {
+      if (checkbox.checked) {
+        checkedPlayers.push(this.players()[index].id);
+      }
+    });
+    return checkedPlayers;
   }
 
   onRowClick(player: Player): void {
@@ -138,17 +168,73 @@ export class PlayersComponent {
     });
   }
 
-  addPlayers(): void {
+  assignPlayers(): void {
     const dialogConfig: MatDialogConfig = {
       data: {
-        user: this.#user(),
-        programId: this.currentProgram().id,
+        dialogTitle: 'Confirm Action',
+        confirmationText: `Are you sure you want to assign the selected players to ${
+          this.currentProgram().name
+        }?`,
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes',
       },
     };
-    const dialogRef = this.dialog.open(AddPlayersComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res.success) {
-        this.snackBar.open(`Players added to program`, 'Close');
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        const playerIds = this.getCheckedPlayers();
+        this.playerService
+          .addPlayersToProgram(this.currentProgram().id, playerIds)
+          .then(() => {
+            this.snackBar.open(
+              `Selected players assigned to ${this.currentProgram().name}`,
+              'Close'
+            );
+          })
+          .catch((err: Error) => {
+            logEvent(this.analytics, 'error', {
+              component: this.constructor.name,
+              action: 'assignPlayers',
+              message: err.message,
+            });
+            this.snackBar.open(
+              'Something went wrong - could not assign players',
+              'Close'
+            );
+          });
+      }
+    });
+  }
+
+  clearPlayers(): void {
+    const dialogConfig: MatDialogConfig = {
+      data: {
+        dialogTitle: 'Confirm Action',
+        confirmationText:
+          'This will remove all players from the program. Are you sure you want to continue?',
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes',
+      },
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        this.playerService
+          .clearProgramPlayers(this.currentProgram().id)
+          .then(() => {
+            this.snackBar.open('All players removed from program', 'Close');
+          })
+          .catch((err: Error) => {
+            logEvent(this.analytics, 'error', {
+              component: this.constructor.name,
+              action: 'clearPlayers',
+              message: err.message,
+            });
+            this.snackBar.open(
+              'Something went wrong - could not clear players',
+              'Close'
+            );
+          });
       }
     });
   }

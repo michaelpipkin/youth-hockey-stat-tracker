@@ -161,6 +161,14 @@ mat-dialog-actions {
   justify-content: center;
 }
 
+.dense-table {
+  th,
+  td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
 .help-icon {
   margin-left: 16px;
   height: 30px;
