@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, model } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,8 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Address } from '@models/address';
-import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
 import { Program } from '@models/program';
 import { PlayerService } from '@services/player.service';
@@ -147,7 +145,6 @@ export class CreatePlayerComponent {
       guardians: guardians,
       programId: formValues.addToProgram ? this.program.id : '',
       teamId: '',
-      active: true,
     };
     this.playerService
       .createPlayer(newPlayer)

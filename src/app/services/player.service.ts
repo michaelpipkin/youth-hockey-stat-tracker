@@ -104,6 +104,18 @@ export class PlayerService {
     }
   }
 
+  async addPlayerToProgram(playerId: string, programId: string): Promise<any> {
+    return await updateDoc(doc(this.fs, `players/${playerId}`), {
+      programId: programId,
+    })
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        return new Error(err.message);
+      });
+  }
+
   async addPlayersToProgram(
     programId: string,
     playerIds: string[]
@@ -115,6 +127,19 @@ export class PlayerService {
     });
     return await batch
       .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        return new Error(err.message);
+      });
+  }
+
+  async removePlayerFromProgram(playerId: string): Promise<any> {
+    return await updateDoc(doc(this.fs, `players/${playerId}`), {
+      programId: '',
+      teamId: '',
+    })
       .then(() => {
         return true;
       })

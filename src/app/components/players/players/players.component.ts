@@ -143,6 +143,7 @@ export class PlayersComponent {
       data: {
         player: player,
         user: this.#user(),
+        program: this.currentProgram(),
       },
     };
     const dialogRef = this.dialog.open(EditPlayerComponent, dialogConfig);
@@ -204,6 +205,38 @@ export class PlayersComponent {
           });
       }
     });
+  }
+
+  addPlayer(player: Player): void {
+    this.playerService
+      .addPlayerToProgram(player.id, this.currentProgram().id)
+      .catch((err: Error) => {
+        logEvent(this.analytics, 'error', {
+          component: this.constructor.name,
+          action: 'addPlayer',
+          message: err.message,
+        });
+        this.snackBar.open(
+          'Something went wrong - could not add player',
+          'Close'
+        );
+      });
+  }
+
+  removePlayer(player: Player): void {
+    this.playerService
+      .removePlayerFromProgram(player.id)
+      .catch((err: Error) => {
+        logEvent(this.analytics, 'error', {
+          component: this.constructor.name,
+          action: 'removePlayer',
+          message: err.message,
+        });
+        this.snackBar.open(
+          'Something went wrong - could not remove player',
+          'Close'
+        );
+      });
   }
 
   clearPlayers(): void {

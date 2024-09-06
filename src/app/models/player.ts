@@ -21,7 +21,6 @@ export interface IPlayer {
   teamId: string;
   usaHockeyNumber: string;
   importantInfo: string;
-  active: boolean;
 }
 
 export class Player implements IPlayer {
@@ -45,7 +44,6 @@ export class Player implements IPlayer {
   public teamId: string;
   public usaHockeyNumber: string;
   public importantInfo: string;
-  public active: boolean;
   public get age(): number {
     const today = new Date();
     const birthDate = new Date(this.birthDate.toDate());

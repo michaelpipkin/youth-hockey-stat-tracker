@@ -66,8 +66,9 @@
       class="dense-table"
     >
       @let columnsToDisplay = ['firstName', 'lastName', 'gender', 'age',
-      'program', 'tryoutNumber', 'jerseyNumber', 'evalScore', 'looks', 'team',
-      'usaHockeyNumber', 'goalie', 'parentCoach', 'assign'];
+      'program', 'tryoutNumber', 'evalScore', 'looks', 'team', 'jerseyNumber',
+      'usaHockeyNumber', 'tShirtSize', 'goalie', 'parentCoach', 'addRemove',
+      'select'];
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>Id</th>
         <td mat-cell *matCellDef="let player">{{ player.id }}</td>
@@ -132,20 +133,48 @@
         <th mat-header-cell *matHeaderCellDef>USA Hockey<br />Number</th>
         <td mat-cell *matCellDef="let player">{{ player.usaHockeyNumber }}</td>
       </ng-container>
+      <ng-container matColumnDef="tShirtSize">
+        <th mat-header-cell *matHeaderCellDef>T-shirt<br />Size</th>
+        <td mat-cell *matCellDef="let player">{{ player.tShirtSize }}</td>
+      </ng-container>
       <ng-container matColumnDef="parentCoach">
         <th mat-header-cell *matHeaderCellDef>Parent<br />Coach</th>
         <td mat-cell *matCellDef="let player">
           {{ player.parentCoach | yesNo }}
         </td>
       </ng-container>
-      <ng-container matColumnDef="assign">
-        <th mat-header-cell *matHeaderCellDef>Assign to<br />Program</th>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>Select</th>
         <td mat-cell *matCellDef="let player">
           <mat-checkbox
             #assignCheckbox
             [class.hidden]="player.programId !== ''"
             (click)="$event.stopPropagation()"
           ></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="addRemove">
+        <th mat-header-cell *matHeaderCellDef>Add/<br />Remove</th>
+        <td mat-cell *matCellDef="let player">
+          @if (player.programId === '') {
+          <button
+            mat-icon-button
+            aria-label="Add player"
+            (click)="addPlayer(player); $event.stopPropagation()"
+          >
+            <mat-icon fontSet="material-symbols-outlined">person_add</mat-icon>
+          </button>
+          } @else {
+          <button
+            mat-icon-button
+            aria-label="Remove player"
+            (click)="removePlayer(player); $event.stopPropagation()"
+          >
+            <mat-icon fontSet="material-symbols-outlined"
+              >person_remove</mat-icon
+            >
+          </button>
+          }
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
