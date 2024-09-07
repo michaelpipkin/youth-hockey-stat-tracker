@@ -89,7 +89,7 @@ export class ProgramService {
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error('You have already created a program with this name.');
+        throw new Error('You have already created a program with this name.');
       }
       return await addDoc(c, program);
     });
@@ -105,7 +105,7 @@ export class ProgramService {
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error('A program with this name already exists.');
+        throw new Error('A program with this name already exists.');
       }
       return await updateDoc(doc(this.fs, `programs/${program.id}`), program);
     });
@@ -115,7 +115,7 @@ export class ProgramService {
     const batch = writeBatch(this.fs);
     const program = await getDoc(doc(this.fs, `programs/${programId}`));
     if (!program.exists) {
-      return new Error('Program does not exist');
+      throw new Error('Program does not exist');
     }
     const q = query(
       collection(this.fs, 'programs'),

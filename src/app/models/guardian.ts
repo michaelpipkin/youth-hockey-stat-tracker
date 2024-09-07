@@ -1,7 +1,6 @@
 import { Coach } from '@shared/enums';
 
 export interface IGuardian {
-  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -13,7 +12,6 @@ export class Guardian implements IGuardian {
   constructor(init?: Partial<Guardian>) {
     Object.assign(this, init);
   }
-  public id: string;
   public firstName: string;
   public lastName: string;
   public email: string;

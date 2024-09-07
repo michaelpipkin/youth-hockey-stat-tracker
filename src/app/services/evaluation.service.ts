@@ -71,7 +71,7 @@ export class EvaluationService {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 
@@ -98,7 +98,7 @@ export class EvaluationService {
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error(
+        throw new Error(
           'An evaluation with this evaluator and date already exists.'
         );
       }
@@ -119,7 +119,7 @@ export class EvaluationService {
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error(
+        throw new Error(
           'An evaluation with this evaluator and date already exists.'
         );
       }

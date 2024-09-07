@@ -179,7 +179,7 @@
         </mat-form-field>
         <mat-icon
           fontSet="material-symbols-outlined"
-          (click)="removeGuardian()"
+          (click)="removeGuardian(i)"
           class="mat-icon-button"
           matTooltip="Remove Guardian"
           >delete</mat-icon
@@ -195,6 +195,7 @@
     <button
       mat-flat-button
       type="submit"
+      class="btn-tertiary"
       [disabled]="playerForm.invalid"
       (click)="onSubmit()"
     >

@@ -145,6 +145,10 @@ export class CreatePlayerComponent {
       guardians: guardians,
       programId: formValues.addToProgram ? this.program.id : '',
       teamId: '',
+      tryoutNumber: '',
+      jerseyNumber: '',
+      evaluationScore: 0,
+      totalLooks: 0,
     };
     this.playerService
       .createPlayer(newPlayer)

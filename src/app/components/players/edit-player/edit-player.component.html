@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Create New Player</h1>
+<h1 mat-dialog-title>Edit Player</h1>
 <form [formGroup]="playerForm">
   <mat-dialog-content class="content">
     <div class="section-1">
@@ -117,6 +117,30 @@
         <input matInput formControlName="importantInfo" />
       </mat-form-field>
     </div>
+    <div class="section-6">
+      <mat-form-field appearance="fill" class="jersey-number">
+        <mat-label>Tryout #</mat-label>
+        <input matInput formControlName="tryoutNumber" />
+        @if (f.tryoutNumber.errors?.['pattern']) {
+        <mat-error>*Invalid</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="jersey-number">
+        <mat-label>Jersey #</mat-label>
+        <input matInput formControlName="jerseyNumber" />
+        @if (f.jerseyNumber.errors?.['pattern']) {
+        <mat-error>*Invalid</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Team</mat-label>
+        <mat-select formControlName="teamId">
+          @for (team of teams(); track team.id) {
+          <mat-option [value]="team.id">{{ team.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="guardian-title">
       <h5>Guardians</h5>
       <mat-icon
@@ -176,7 +200,7 @@
         </mat-form-field>
         <mat-icon
           fontSet="material-symbols-outlined"
-          (click)="removeGuardian()"
+          (click)="removeGuardian(i)"
           class="mat-icon-button"
           matTooltip="Remove Guardian"
           >delete</mat-icon
@@ -192,10 +216,19 @@
     <button
       mat-flat-button
       type="submit"
-      [disabled]="playerForm.invalid"
+      class="btn-tertiary"
+      [disabled]="playerForm.invalid || playerForm.pristine"
       (click)="onSubmit()"
     >
-      Update Player
+      Save Changes
+    </button>
+    <button
+      mat-flat-button
+      type="button"
+      (click)="deletePlayer()"
+      class="btn-danger"
+    >
+      Delete Player
     </button>
     <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
   </mat-dialog-actions>

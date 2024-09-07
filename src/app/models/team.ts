@@ -6,7 +6,7 @@ export interface ITeam {
   id: string;
   name: string;
   description: string;
-  players: [Player];
+  players: Player[];
   headCoach: Guardian;
   assistantCoach1: Guardian;
   assistantCoach2: Guardian;
@@ -20,7 +20,7 @@ export class Team implements ITeam {
   public id: string;
   public name: string;
   public description: string;
-  public players: [Player];
+  public players: Player[];
   public headCoach: Guardian;
   public assistantCoach1: Guardian;
   public assistantCoach2: Guardian;
@@ -30,5 +30,11 @@ export class Team implements ITeam {
   }
   public get femalePlayerCount(): number {
     return this.players.filter((player) => player.gender === Gender.F).length;
+  }
+  public get averageScore(): number {
+    return (
+      this.players.reduce((acc, player) => acc + player.evaluationScore, 0) /
+      this.players.length
+    );
   }
 }

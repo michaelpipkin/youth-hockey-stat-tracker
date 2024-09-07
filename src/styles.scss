@@ -94,6 +94,14 @@ mat-slide-toggle {
   ) !important;
 }
 
+.btn-danger:not([disabled]) {
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    error,
+    50
+  ) !important;
+}
+
 .mat-mdc-header-row,
 .mat-mdc-footer-row {
   background-color: #dcdcdc !important;
@@ -276,4 +284,20 @@ mat-icon.mat-icon-button {
 
 .goalie-select {
   width: 140px;
+}
+
+.jersey-number {
+  width: 90px;
+}
+
+.cell-center {
+  text-align: center !important;
+}
+
+.cell-right {
+  text-align: right !important;
+}
+
+.cell-left {
+  text-align: left !important;
 }

@@ -1,5 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { get } from '@angular/fire/database';
 import { Guardian } from '@models/guardian';
+import { Player } from '@models/player';
 import { Team } from '@models/team';
 import { Coach } from '@shared/enums';
 import {
@@ -28,13 +30,28 @@ export class TeamService {
   currentTeam = signal<Team | null>(null);
   currentTeamCoaches = signal<Guardian[]>([]);
 
-  getProgramTeams(programId: string): void {
-    const teams = collection(this.fs, `progams/${programId}/teams`);
-    const q = query(teams, orderBy('name', 'asc'));
-    onSnapshot(q, (snapshot) => {
-      this.currentProgramTeams.set(
-        snapshot.docs.map((doc) => new Team({ id: doc.id, ...doc.data() }))
+  async getProgramTeams(programId: string): Promise<void> {
+    const playerCollection = collection(this.fs, 'players');
+    const playerQuery = query(
+      playerCollection,
+      where('programId', '==', programId),
+      where('teamId', '!=', '')
+    );
+    onSnapshot(playerQuery, (playerSnapshot) => {
+      const players = playerSnapshot.docs.map(
+        (doc) => new Player({ id: doc.id, ...doc.data() })
       );
+      const teamCollection = collection(this.fs, `progams/${programId}/teams`);
+      const teamQuery = query(teamCollection, orderBy('name', 'asc'));
+      onSnapshot(teamQuery, (teamSnapshot) => {
+        const teams = teamSnapshot.docs.map(
+          (doc) => new Team({ id: doc.id, ...doc.data() })
+        );
+        teams.forEach((team) => {
+          team.players = players.filter((player) => player.teamId === team.id);
+        });
+        this.currentProgramTeams.set(teams);
+      });
     });
   }
 
@@ -73,7 +90,7 @@ export class TeamService {
     const q = query(c, where('name', '==', team.name));
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error(
+        throw new Error(
           'A team with that name already exists in this program.'
         );
       } else {
@@ -91,7 +108,7 @@ export class TeamService {
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error(
+        throw new Error(
           'A team with that name already exists in this program.'
         );
       }
@@ -107,7 +124,7 @@ export class TeamService {
     const q = query(c, where('teamId', '==', teamId));
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
-        return new Error('Cannot delete a team with active players.');
+        throw new Error('Cannot delete a team with active players.');
       }
       return await deleteDoc(
         doc(this.fs, `programs/${programId}/teams/${teamId}`)

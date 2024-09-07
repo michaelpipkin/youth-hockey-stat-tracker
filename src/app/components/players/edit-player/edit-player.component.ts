@@ -94,8 +94,14 @@ export class EditPlayerComponent {
     goalie: [this.player.goalie, Validators.required],
     tShirtSize: [this.player.tShirtSize, Validators.required],
     importantInfo: [this.player.importantInfo],
-    tryoutNumber: [this.player.tryoutNumber],
-    jerseyNumber: [this.player.jerseyNumber],
+    tryoutNumber: [
+      this.player.tryoutNumber,
+      Validators.pattern('^[0-9]{1,3}$'),
+    ],
+    jerseyNumber: [
+      this.player.jerseyNumber,
+      Validators.pattern('^[0-9]{1,3}$'),
+    ],
     teamId: [this.player.teamId],
     guardians: this.fb.array(
       this.player.guardians.map((guardian) =>
@@ -130,10 +136,12 @@ export class EditPlayerComponent {
 
   addGuardian(): void {
     this.guardiansFormArray.push(this.createGuardianFormGroup());
+    this.playerForm.markAsDirty();
   }
 
   removeGuardian(index: number): void {
     this.guardiansFormArray.removeAt(index);
+    this.playerForm.markAsDirty();
   }
 
   public get f() {
@@ -141,7 +149,7 @@ export class EditPlayerComponent {
   }
 
   onSubmit(): void {
-    //this.playerForm.disable();
+    this.playerForm.disable();
     const formValues = this.playerForm.value;
     let guardians = [];
     formValues.guardians.forEach((guardianForm: any) => {
@@ -154,6 +162,7 @@ export class EditPlayerComponent {
       });
     });
     const player: Partial<Player> = {
+      id: this.player.id,
       firstName: formValues.firstName,
       lastName: formValues.lastName,
       gender: formValues.gender,
@@ -171,24 +180,29 @@ export class EditPlayerComponent {
       importantInfo: formValues.importantInfo,
       guardians: guardians,
       programId: this.program.id,
-      teamId: '',
+      teamId: formValues.teamId,
+      tryoutNumber: formValues.tryoutNumber,
+      jerseyNumber: formValues.jerseyNumber,
     };
-    console.log(player);
-    // this.playerService
-    //   .updatePlayer(player)
-    //   .then(() => {
-    //     this.dialogRef.close(true);
-    //   })
-    //   .catch((err: Error) => {
-    //     logEvent(this.analytics, 'error', {
-    //       component: this.constructor.name,
-    //       action: 'updatePlayer',
-    //       message: err.message,
-    //     });
-    //     this.snackBar.open('Error updating player', 'Close', {
-    //       verticalPosition: 'top',
-    //     });
-    //     this.playerForm.enable();
-    //   });
+    this.playerService
+      .updatePlayer(player)
+      .then(() => {
+        this.dialogRef.close(true);
+      })
+      .catch((err: Error) => {
+        logEvent(this.analytics, 'error', {
+          component: this.constructor.name,
+          action: 'updatePlayer',
+          message: err.message,
+        });
+        this.snackBar.open(err.message, 'Close', {
+          verticalPosition: 'top',
+        });
+        this.playerForm.enable();
+      });
+  }
+
+  deletePlayer(): void {
+    // TO-DO: Implement delete player functionality
   }
 }

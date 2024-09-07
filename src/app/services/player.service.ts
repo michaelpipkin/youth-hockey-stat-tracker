@@ -76,29 +76,46 @@ export class PlayerService {
   }
 
   async updatePlayer(player: Partial<Player>): Promise<any> {
-    const c = collection(this.fs, 'players');
-    const q = query(
-      c,
+    const coll = collection(this.fs, 'players');
+    const q1 = query(
+      coll,
       where('firstName', '==', player.firstName),
       where('lastName', '==', player.lastName),
       where('birthDate', '==', player.birthDate),
       where(documentId(), '!=', player.id)
     );
-    return await getDocs(q).then(async (snapshot) => {
-      if (!snapshot.empty) {
-        return new Error(
-          'A player with this name and birth date already exists.'
-        );
-      }
+    const q2 = query(
+      coll,
+      where('programId', '==', player.programId),
+      where('tryoutNumber', '==', player.tryoutNumber),
+      where(documentId(), '!=', player.id)
+    );
+    const q3 = query(
+      coll,
+      where('teamId', '==', player.teamId),
+      where('jerseyNumber', '==', player.jerseyNumber),
+      where(documentId(), '!=', player.id)
+    );
+    if (!(await getDocs(q1)).empty) {
+      throw new Error('A player with this name and birth date already exists.');
+    } else if (!(await getDocs(q2)).empty) {
+      throw new Error(
+        'A player with this tryout number already exists in this program.'
+      );
+    } else if (!(await getDocs(q3)).empty) {
+      throw new Error(
+        'A player with this jersey number already exists on the same team.'
+      );
+    } else {
       return await updateDoc(doc(this.fs, `players/${player.id}`), player);
-    });
+    }
   }
 
   async deletePlayer(playerId: string): Promise<any> {
     const playerDoc = await getDoc(doc(this.fs, `players/${playerId}`));
     const player = new Player({ id: playerDoc.id, ...playerDoc.data() });
     if (player.programId !== null || player.teamId !== null) {
-      return new Error('Cannot delete a player assigned to a program or team.');
+      throw new Error('Cannot delete a player assigned to a program or team.');
     } else {
       return await deleteDoc(doc(this.fs, `players/${playerId}`));
     }
@@ -112,7 +129,7 @@ export class PlayerService {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 
@@ -131,7 +148,7 @@ export class PlayerService {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 
@@ -139,12 +156,14 @@ export class PlayerService {
     return await updateDoc(doc(this.fs, `players/${playerId}`), {
       programId: '',
       teamId: '',
+      tryoutNumber: '',
+      jerseyNumber: '',
     })
       .then(() => {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 
@@ -165,7 +184,7 @@ export class PlayerService {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 
@@ -186,7 +205,7 @@ export class PlayerService {
         return true;
       })
       .catch((err: Error) => {
-        return new Error(err.message);
+        throw new Error(err.message);
       });
   }
 }
