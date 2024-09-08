@@ -35,10 +35,40 @@
   <button
     mat-flat-button
     type="submit"
-    [disabled]="!editProgramForm.valid"
+    class="btn-tertiary"
+    [disabled]="
+      !editProgramForm.valid ||
+      editProgramForm.pristine ||
+      editProgramForm.disabled
+    "
     (click)="onSubmit()"
   >
     Save
   </button>
-  <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
+  <div
+    matTooltip="Cannot delete active program"
+    [matTooltipDisabled]="!selectedProgram()?.active"
+  >
+    <button
+      mat-flat-button
+      type="button"
+      (click)="deleteProgram()"
+      class="btn-danger"
+      [disabled]="
+        !selectedProgram() ||
+        selectedProgram()?.active ||
+        editProgramForm.disabled
+      "
+    >
+      Delete
+    </button>
+  </div>
+  <button
+    mat-stroked-button
+    type="button"
+    [disabled]="editProgramForm.disabled"
+    mat-dialog-close
+  >
+    Cancel
+  </button>
 </mat-dialog-actions>

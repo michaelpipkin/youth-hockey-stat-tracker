@@ -7,3 +7,28 @@
   grid-template-columns: 1fr;
   margin-bottom: 8px;
 }
+
+.team-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.team-card-header {
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.player-details {
+  display: grid;
+  grid-template-columns: max-content 30px max-content 30px 55px;
+  column-gap: 12px;
+}
+
+.card-hr {
+  display: grid;
+  grid-column-start: 1;
+  grid-column-end: span 5;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}

@@ -29,6 +29,7 @@
     "@angular/router": "^18.2.3",
     "bootstrap": "^5.2.3",
     "firebaseui": "^6.1.0",
+    "replace-in-file": "^8.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

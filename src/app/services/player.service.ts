@@ -98,11 +98,11 @@ export class PlayerService {
     );
     if (!(await getDocs(q1)).empty) {
       throw new Error('A player with this name and birth date already exists.');
-    } else if (!(await getDocs(q2)).empty) {
+    } else if (player.tryoutNumber !== '' && !(await getDocs(q2)).empty) {
       throw new Error(
         'A player with this tryout number already exists in this program.'
       );
-    } else if (!(await getDocs(q3)).empty) {
+    } else if (player.jerseyNumber !== '' && !(await getDocs(q3)).empty) {
       throw new Error(
         'A player with this jersey number already exists on the same team.'
       );
@@ -114,7 +114,7 @@ export class PlayerService {
   async deletePlayer(playerId: string): Promise<any> {
     const playerDoc = await getDoc(doc(this.fs, `players/${playerId}`));
     const player = new Player({ id: playerDoc.id, ...playerDoc.data() });
-    if (player.programId !== null || player.teamId !== null) {
+    if (player.programId !== '' || player.teamId !== '') {
       throw new Error('Cannot delete a player assigned to a program or team.');
     } else {
       return await deleteDoc(doc(this.fs, `players/${playerId}`));

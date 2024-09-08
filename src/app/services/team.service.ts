@@ -1,5 +1,4 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { get } from '@angular/fire/database';
 import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
 import { Team } from '@models/team';
@@ -31,21 +30,22 @@ export class TeamService {
   currentTeamCoaches = signal<Guardian[]>([]);
 
   async getProgramTeams(programId: string): Promise<void> {
-    const playerCollection = collection(this.fs, 'players');
-    const playerQuery = query(
-      playerCollection,
-      where('programId', '==', programId),
-      where('teamId', '!=', '')
-    );
-    onSnapshot(playerQuery, (playerSnapshot) => {
-      const players = playerSnapshot.docs.map(
-        (doc) => new Player({ id: doc.id, ...doc.data() })
+    const teamCollection = collection(this.fs, `programs/${programId}/teams`);
+    const teamQuery = query(teamCollection, orderBy('name', 'asc'));
+
+    onSnapshot(teamQuery, (teamSnapshot) => {
+      const teams = teamSnapshot.docs.map(
+        (doc) => new Team({ id: doc.id, ...doc.data() })
       );
-      const teamCollection = collection(this.fs, `progams/${programId}/teams`);
-      const teamQuery = query(teamCollection, orderBy('name', 'asc'));
-      onSnapshot(teamQuery, (teamSnapshot) => {
-        const teams = teamSnapshot.docs.map(
-          (doc) => new Team({ id: doc.id, ...doc.data() })
+      const playerCollection = collection(this.fs, 'players');
+      const playerQuery = query(
+        playerCollection,
+        where('programId', '==', programId),
+        where('teamId', '!=', '')
+      );
+      onSnapshot(playerQuery, (playerSnapshot) => {
+        const players = playerSnapshot.docs.map(
+          (doc) => new Player({ id: doc.id, ...doc.data() })
         );
         teams.forEach((team) => {
           team.players = players.filter((player) => player.teamId === team.id);

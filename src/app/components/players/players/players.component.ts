@@ -142,8 +142,6 @@ export class PlayersComponent {
     const dialogConfig: MatDialogConfig = {
       data: {
         player: player,
-        user: this.#user(),
-        program: this.currentProgram(),
       },
     };
     const dialogRef = this.dialog.open(EditPlayerComponent, dialogConfig);

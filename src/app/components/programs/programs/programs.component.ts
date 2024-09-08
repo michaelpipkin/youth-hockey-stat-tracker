@@ -92,9 +92,9 @@ export class ProgramsComponent {
       data: { user: this.#user() },
     };
     const dialogRef = this.dialog.open(EditProgramComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((success) => {
-      if (success) {
-        this.snackBar.open('Program updated successfully!', 'Close');
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res.success) {
+        this.snackBar.open(`Program ${res.operation} successfully!`, 'Close');
       }
     });
   }

@@ -130,4 +130,8 @@ export class ProgramService {
     batch.update(doc(this.fs, `programs/${programId}`), { active: true });
     batch.commit();
   }
+
+  async deleteProgram(programId: string): Promise<any> {
+    // TODO: Implement deleteProgram method
+  }
 }

@@ -18,11 +18,18 @@
     <button
       mat-flat-button
       type="submit"
-      [disabled]="newProgramForm.invalid"
+      [disabled]="newProgramForm.invalid || newProgramForm.disabled"
       (click)="onSubmit()"
     >
       Add Program
     </button>
-    <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="newProgramForm.disabled"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
   </mat-dialog-actions>
 </form>

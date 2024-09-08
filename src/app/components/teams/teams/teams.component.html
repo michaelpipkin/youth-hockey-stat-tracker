@@ -11,7 +11,60 @@
       >
     </div>
   </div>
-  <div class="buttons">
+  <div class="mb-3">
     <button mat-flat-button (click)="addTeam()">Add New Team</button>
+  </div>
+  <div class="team-cards">
+    @for (team of teams(); track team.id) {
+    <mat-card appearance="outlined">
+      <mat-card-header class="team-card-header">
+        <mat-card-title
+          class="clickable"
+          matTooltip="Edit team"
+          (click)="editTeam(team)"
+          >{{ team.name }}</mat-card-title
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <div class="player-details">
+          <span>Name</span>
+          <span>#</span>
+          <span>Goalie</span>
+          <span>Eval</span>
+          <span>Options</span>
+          <hr class="card-hr" />
+          @for (player of team.players; track player.id) {
+          <span
+            class="clickable"
+            (click)="editPlayer(player)"
+            matTooltip="Edit player"
+            >{{ player.fullName }}</span
+          >
+          <span>{{ player.jerseyNumber }}</span>
+          <span>{{ player.goalie }}</span>
+          <span>{{ player.evaluationScore }}</span>
+          <div>
+            <mat-icon
+              class="me-1 small-icon-button"
+              fontSet="material-symbols-outlined"
+              matTooltip="Remove player from team"
+              (click)="removePlayer(player)"
+              >person_remove</mat-icon
+            >
+
+            <mat-icon
+              class="small-icon-button"
+              fontSet="material-symbols-outlined"
+              matTooltip="Move player to another team"
+              (click)="movePlayer(team, player)"
+              >swap_horiz</mat-icon
+            >
+          </div>
+          }
+        </div>
+      </mat-card-content>
+      <mat-card-actions> </mat-card-actions>
+    </mat-card>
+    }
   </div>
 </div>

@@ -17,6 +17,7 @@ import { Program } from '@models/program';
 import { Team } from '@models/team';
 import { PlayerService } from '@services/player.service';
 import { TeamService } from '@services/team.service';
+import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.component';
 import { FormatPhoneDirective } from '@shared/directives/format-phone.directive';
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
 import { CreatePlayerComponent } from '../create-player/create-player.component';
@@ -32,6 +33,7 @@ import {
   MatDialogModule,
   MatDialogRef,
   MAT_DIALOG_DATA,
+  MatDialog,
 } from '@angular/material/dialog';
 
 @Component({
@@ -62,10 +64,9 @@ export class EditPlayerComponent {
   teamService = inject(TeamService);
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
+  dialog = inject(MatDialog);
   data = inject(MAT_DIALOG_DATA);
   player: Player = this.data.player;
-  user: User = this.data.user;
-  program: Program = this.data.program;
 
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
 
@@ -179,7 +180,7 @@ export class EditPlayerComponent {
       tShirtSize: formValues.tShirtSize,
       importantInfo: formValues.importantInfo,
       guardians: guardians,
-      programId: this.program.id,
+      programId: this.player.programId,
       teamId: formValues.teamId,
       tryoutNumber: formValues.tryoutNumber,
       jerseyNumber: formValues.jerseyNumber,
@@ -203,6 +204,36 @@ export class EditPlayerComponent {
   }
 
   deletePlayer(): void {
-    // TO-DO: Implement delete player functionality
+    const dialogConfig = {
+      data: {
+        operation: 'Delete',
+        target: `player: ${this.player.fullName}`,
+      },
+    };
+    const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        this.playerService
+          .deletePlayer(this.player.id)
+          .then((res) => {
+            if (res?.name === 'Error') {
+              this.snackBar.open(res.message, 'Close');
+            } else {
+              this.dialogRef.close({
+                success: true,
+                operation: 'deleted',
+              });
+            }
+          })
+          .catch((err: Error) => {
+            logEvent(this.analytics, 'error', {
+              component: this.constructor.name,
+              action: 'deletePlayer',
+              message: err.message,
+            });
+            this.snackBar.open(err.message, 'Close');
+          });
+      }
+    });
   }
 }
