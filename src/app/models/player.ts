@@ -1,5 +1,5 @@
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
-import { Timestamp } from 'firebase/firestore';
+import { DocumentReference, Timestamp } from 'firebase/firestore';
 import { IAddress } from './address';
 import { IGuardian } from './guardian';
 
@@ -17,8 +17,8 @@ export interface IPlayer {
   totalLooks: number;
   tShirtSize: TShirtSize;
   goalie: Goalie;
-  programId: string;
-  teamId: string;
+  programRef: DocumentReference;
+  teamRef: DocumentReference;
   usaHockeyNumber: string;
   importantInfo: string;
 }
@@ -40,8 +40,8 @@ export class Player implements IPlayer {
   public totalLooks: number;
   public tShirtSize: TShirtSize;
   public goalie: Goalie;
-  public programId: string;
-  public teamId: string;
+  public programRef: DocumentReference;
+  public teamRef: DocumentReference;
   public usaHockeyNumber: string;
   public importantInfo: string;
   public get age(): number {
@@ -61,6 +61,8 @@ export class Player implements IPlayer {
     return `${this.lastName}, ${this.firstName}`;
   }
   public get parentCoach(): boolean {
-    return this.guardians.some((guardian) => guardian.coachManager !== Coach.N);
+    return this.guardians.some(
+      (guardian) => guardian.availableCoachRole !== Coach.N
+    );
   }
 }

@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { Analytics } from '@angular/fire/analytics';
 import { User } from '@angular/fire/auth';
@@ -16,13 +17,21 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { TeamService } from '@services/team.service';
 import { UserService } from '@services/user.service';
+import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddTeamComponent } from '../add-team/add-team.component';
 import { EditTeamComponent } from '../edit-team/edit-team.component';
 
 @Component({
   selector: 'app-teams',
   standalone: true,
-  imports: [MatIconModule, MatCardModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    MatIconModule,
+    MatCardModule,
+    MatButtonModule,
+    MatTooltipModule,
+    YesNoPipe,
+    DecimalPipe,
+  ],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
 })
@@ -38,6 +47,11 @@ export class TeamsComponent {
   #user: Signal<User> = this.userService.user;
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
+  players: Signal<Player[]> = this.playerService.currentProgramPlayers;
+
+  public getTeamPlayers(teamId: string): Player[] {
+    return this.players().filter((p) => p.teamRef.id === teamId);
+  }
 
   addTeam(): void {
     const dialogConfig: MatDialogConfig = {

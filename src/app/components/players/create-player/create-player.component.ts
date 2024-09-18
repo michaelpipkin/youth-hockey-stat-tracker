@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { User } from '@angular/fire/auth';
+import { collection, doc, Firestore } from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -11,8 +12,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
 import { Program } from '@models/program';
+import { GuardianService } from '@services/guardian.service';
 import { PlayerService } from '@services/player.service';
 import { FormatPhoneDirective } from '@shared/directives/format-phone.directive';
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
@@ -54,7 +57,9 @@ import {
 export class CreatePlayerComponent {
   dialogRef = inject(MatDialogRef<CreatePlayerComponent>);
   fb = inject(FormBuilder);
+  fs = inject(Firestore);
   playerService = inject(PlayerService);
+  guardianService = inject(GuardianService);
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
   data = inject(MAT_DIALOG_DATA);
@@ -113,19 +118,9 @@ export class CreatePlayerComponent {
     return this.playerForm.controls;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.playerForm.disable();
     const formValues = this.playerForm.value;
-    let guardians = [];
-    formValues.guardians.forEach((guardianForm: any) => {
-      guardians.push({
-        firstName: guardianForm.firstName,
-        lastName: guardianForm.lastName,
-        email: guardianForm.email,
-        phone: guardianForm.phone,
-        coachManager: guardianForm.coachManager,
-      });
-    });
     const newPlayer: Partial<Player> = {
       firstName: formValues.firstName,
       lastName: formValues.lastName,
@@ -142,16 +137,28 @@ export class CreatePlayerComponent {
       usaHockeyNumber: formValues.usaHockeyNumber,
       tShirtSize: formValues.tShirtSize,
       importantInfo: formValues.importantInfo,
-      guardians: guardians,
-      programId: formValues.addToProgram ? this.program.id : '',
-      teamId: '',
+      teamRef: null,
       tryoutNumber: '',
       jerseyNumber: '',
       evaluationScore: 0,
       totalLooks: 0,
     };
-    this.playerService
-      .createPlayer(newPlayer)
+    let guardians = [];
+    formValues.guardians.forEach((guardianForm: any) => {
+      guardians.push({
+        firstName: guardianForm.firstName,
+        lastName: guardianForm.lastName,
+        email: guardianForm.email,
+        phone: guardianForm.phone,
+        availableCoachRole: guardianForm.coachManager,
+      });
+    });
+    await this.playerService
+      .createPlayer(
+        newPlayer,
+        guardians,
+        formValues.addToProgram ? this.program.id : ''
+      )
       .then(() => {
         this.dialogRef.close(true);
       })

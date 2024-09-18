@@ -10,7 +10,7 @@
 
 .team-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 16px;
 }
 
@@ -21,14 +21,21 @@
 
 .player-details {
   display: grid;
-  grid-template-columns: max-content 30px max-content 30px 55px;
+  grid-template-columns: max-content 30px max-content max-content 30px 55px;
   column-gap: 12px;
+  line-height: 1.4rem;
 }
 
 .card-hr {
   display: grid;
   grid-column-start: 1;
-  grid-column-end: span 5;
+  grid-column-end: span 6;
   margin-top: 6px;
   margin-bottom: 6px;
+}
+
+.team-summary {
+  padding: 8px 16px 16px 16px;
+  line-height: 1.4rem;
+  display: grid;
 }

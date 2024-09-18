@@ -48,7 +48,9 @@ export class TeamService {
           (doc) => new Player({ id: doc.id, ...doc.data() })
         );
         teams.forEach((team) => {
-          team.players = players.filter((player) => player.teamId === team.id);
+          team.players = players.filter(
+            (player) => player.teamRef.id === team.id
+          );
         });
         this.currentProgramTeams.set(teams);
       });
@@ -57,7 +59,7 @@ export class TeamService {
 
   async getTeam(programId: string, teamId: string): Promise<any> {
     const team = await getDoc(
-      doc(this.fs, `progams/${programId}/teams/${teamId}`)
+      doc(this.fs, `programs/${programId}/teams/${teamId}`)
     );
     this.currentTeam.set(new Team({ id: team.id, ...team.data() }));
   }
@@ -67,17 +69,15 @@ export class TeamService {
     const q = query(
       playersCollection,
       where('teamId', '==', teamId),
-      where('parentCoach', '==', true),
-      orderBy('lastName', 'asc'),
-      orderBy('firstName', 'asc')
+      where('parentCoach', '==', true)
     );
     const coachesList: Guardian[] = [];
     onSnapshot(q, (snapshot) => {
       snapshot.forEach((doc) => {
         const playerData = doc.data();
         playerData.guardians.forEach((guardian: Guardian) => {
-          if (guardian.coachManager !== Coach.N) {
-            coachesList.push(guardian);
+          if (guardian.availableCoachRole !== Coach.N) {
+            coachesList.push(new Guardian({ id: doc.id, ...guardian }));
           }
         });
       });
@@ -86,7 +86,7 @@ export class TeamService {
   }
 
   async addTeam(programId: string, team: Partial<Team>): Promise<any> {
-    const c = collection(this.fs, `progams/${programId}/teams`);
+    const c = collection(this.fs, `programs/${programId}/teams`);
     const q = query(c, where('name', '==', team.name));
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
@@ -100,7 +100,7 @@ export class TeamService {
   }
 
   async updateTeam(programId: string, team: Partial<Team>): Promise<any> {
-    const c = collection(this.fs, `progams/${programId}/teams`);
+    const c = collection(this.fs, `programs/${programId}/teams`);
     const q = query(
       c,
       where('name', '==', team.name),

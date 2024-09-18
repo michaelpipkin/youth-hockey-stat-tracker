@@ -155,6 +155,7 @@
       @for (guardianForm of guardiansFormArray.controls; track guardianForm; let
       i = $index) {
       <div [formGroupName]="i" class="guardian-form">
+        <input class="hidden" formControlName="id" />
         <mat-form-field appearance="fill" class="name">
           <mat-label>First Name</mat-label>
           <input matInput formControlName="firstName" />

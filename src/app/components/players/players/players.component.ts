@@ -98,11 +98,11 @@ export class PlayersComponent {
           (!nameFilter ||
             player.firstName.toLowerCase().includes(nameFilter) ||
             player.lastName.toLowerCase().includes(nameFilter)) &&
-          (showUnassigned || player.programId !== '') &&
+          (showUnassigned || player.programRef !== null) &&
           (!selectedTeamId ||
             (selectedTeamId === '0'
-              ? !player.teamId
-              : player.teamId === selectedTeamId))
+              ? !player.teamRef
+              : player.teamRef.id === selectedTeamId))
         );
       });
       if (players.length > 0) {

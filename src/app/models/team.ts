@@ -1,5 +1,5 @@
+import { DocumentReference } from '@angular/fire/firestore';
 import { Gender, Goalie } from '@shared/enums';
-import { Guardian } from './guardian';
 import { Player } from './player';
 
 export interface ITeam {
@@ -7,10 +7,10 @@ export interface ITeam {
   name: string;
   description: string;
   players: Player[];
-  headCoach: Guardian;
-  assistantCoach1: Guardian;
-  assistantCoach2: Guardian;
-  manager: Guardian;
+  headCoach: DocumentReference;
+  assistantCoach1: DocumentReference;
+  assistantCoach2: DocumentReference;
+  manager: DocumentReference;
 }
 
 export class Team implements ITeam {
@@ -21,10 +21,10 @@ export class Team implements ITeam {
   public name: string;
   public description: string;
   public players: Player[];
-  public headCoach: Guardian;
-  public assistantCoach1: Guardian;
-  public assistantCoach2: Guardian;
-  public manager: Guardian;
+  public headCoach: DocumentReference;
+  public assistantCoach1: DocumentReference;
+  public assistantCoach2: DocumentReference;
+  public manager: DocumentReference;
   public get hasGoalie(): boolean {
     return this.players.some((player) => player.goalie === Goalie.Y);
   }
@@ -32,9 +32,9 @@ export class Team implements ITeam {
     return this.players.filter((player) => player.gender === Gender.F).length;
   }
   public get averageScore(): number {
-    return (
-      this.players.reduce((acc, player) => acc + player.evaluationScore, 0) /
-      this.players.length
-    );
+    return this.players.length === 0
+      ? 0
+      : this.players.reduce((acc, player) => acc + player.evaluationScore, 0) /
+          this.players.length;
   }
 }

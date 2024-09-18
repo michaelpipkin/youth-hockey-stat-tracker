@@ -12,9 +12,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
 import { Program } from '@models/program';
 import { Team } from '@models/team';
+import { GuardianService } from '@services/guardian.service';
 import { PlayerService } from '@services/player.service';
 import { TeamService } from '@services/team.service';
 import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.component';
@@ -61,6 +63,7 @@ export class EditPlayerComponent {
   dialogRef = inject(MatDialogRef<CreatePlayerComponent>);
   fb = inject(FormBuilder);
   playerService = inject(PlayerService);
+  guardianService = inject(GuardianService);
   teamService = inject(TeamService);
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
@@ -68,6 +71,7 @@ export class EditPlayerComponent {
   data = inject(MAT_DIALOG_DATA);
   player: Player = this.data.player;
 
+  guardians: Signal<Guardian[]> = this.guardianService.currentPlayerGuardians;
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
 
   genderOptions = Object.values(Gender);
@@ -103,10 +107,11 @@ export class EditPlayerComponent {
       this.player.jerseyNumber,
       Validators.pattern('^[0-9]{1,3}$'),
     ],
-    teamId: [this.player.teamId],
+    teamId: [this.player.teamRef?.id],
     guardians: this.fb.array(
-      this.player.guardians.map((guardian) =>
+      this.guardians().map((guardian) =>
         this.fb.group({
+          id: [guardian.id],
           firstName: [guardian.firstName, Validators.required],
           lastName: [guardian.lastName, Validators.required],
           email: [guardian.email, [Validators.email]],
@@ -114,7 +119,7 @@ export class EditPlayerComponent {
             guardian.phone,
             [Validators.pattern('^[0-9]{3}-?[0-9]{3}-?[0-9]{4}$')],
           ],
-          coachManager: [guardian.coachManager, Validators.required],
+          coachManager: [guardian.availableCoachRole, Validators.required],
         })
       ),
       [Validators.required, Validators.minLength(1)]
@@ -123,6 +128,7 @@ export class EditPlayerComponent {
 
   createGuardianFormGroup(): FormGroup {
     return this.fb.group({
+      id: [''],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.email]],
@@ -155,6 +161,7 @@ export class EditPlayerComponent {
     let guardians = [];
     formValues.guardians.forEach((guardianForm: any) => {
       guardians.push({
+        id: guardianForm.id,
         firstName: guardianForm.firstName,
         lastName: guardianForm.lastName,
         email: guardianForm.email,
@@ -179,14 +186,12 @@ export class EditPlayerComponent {
       usaHockeyNumber: formValues.usaHockeyNumber,
       tShirtSize: formValues.tShirtSize,
       importantInfo: formValues.importantInfo,
-      guardians: guardians,
-      programId: this.player.programId,
-      teamId: formValues.teamId,
       tryoutNumber: formValues.tryoutNumber,
       jerseyNumber: formValues.jerseyNumber,
+      programRef: this.player.programRef,
     };
     this.playerService
-      .updatePlayer(player)
+      .updatePlayer(player, guardians, formValues.teamId)
       .then(() => {
         this.dialogRef.close(true);
       })

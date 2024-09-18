@@ -58,9 +58,9 @@ export class ProgramService {
   }
 
   getProgramCoaches(programId: string): void {
-    const playersCollection = collection(this.fs, 'players');
+    const guardianCollection = collection(this.fs, 'guardians');
     const q = query(
-      playersCollection,
+      guardianCollection,
       where('programId', '==', programId),
       where('parentCoach', '==', true),
       orderBy('lastName', 'asc'),
@@ -71,8 +71,8 @@ export class ProgramService {
       snapshot.forEach((doc) => {
         const playerData = doc.data();
         playerData.guardians.forEach((guardian: Guardian) => {
-          if (guardian.coachManager !== Coach.N) {
-            coachesList.push(guardian);
+          if (guardian.availableCoachRole !== Coach.N) {
+            coachesList.push(new Guardian({ id: doc.id, ...guardian }));
           }
         });
       });

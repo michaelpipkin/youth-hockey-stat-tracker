@@ -30,10 +30,11 @@
           <span>Name</span>
           <span>#</span>
           <span>Goalie</span>
+          <span>Coach</span>
           <span>Eval</span>
           <span>Options</span>
           <hr class="card-hr" />
-          @for (player of team.players; track player.id) {
+          @for (player of getTeamPlayers(team.id); track player.id) {
           <span
             class="clickable"
             (click)="editPlayer(player)"
@@ -42,6 +43,7 @@
           >
           <span>{{ player.jerseyNumber }}</span>
           <span>{{ player.goalie }}</span>
+          <span>{{ player.parentCoach | yesNo }}</span>
           <span>{{ player.evaluationScore }}</span>
           <div>
             <mat-icon
@@ -62,8 +64,23 @@
           </div>
           }
         </div>
+        <hr class="card-hr" />
       </mat-card-content>
-      <mat-card-actions> </mat-card-actions>
+      <mat-card-footer>
+        <div class="team-summary">
+          <span>Player count: {{ team.players.length }}</span>
+          <span>Female player count: {{ team.femalePlayerCount }}</span>
+          <span
+            >Average evaluation score:
+            {{ team.averageScore | number : "1.2-2" }}</span
+          >
+          <span>Team has goalie: {{ team.hasGoalie | yesNo }}</span>
+          <span>Head coach: {{ team.headCoach?.fullName }}</span>
+          <span>Assistant coach 1: {{ team.assistantCoach1?.fullName }}</span>
+          <span>Assistant coach 2: {{ team.assistantCoach2?.fullName }}</span>
+          <span>Manager: {{ team.manager?.fullName }}</span>
+        </div>
+      </mat-card-footer>
     </mat-card>
     }
   </div>
