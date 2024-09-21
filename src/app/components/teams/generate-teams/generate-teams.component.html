@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Generate Teams</h1>
+<form [formGroup]="teamForm">
+  <mat-dialog-content class="content">
+    <div class="section-1">
+      <mat-form-field appearance="fill" class="num-teams">
+        <mat-label>Number of Teams</mat-label>
+        <input matInput type="number" formControlName="numTeams" />
+        @if (f.numTeams.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        } @if (f.numTeams.errors?.['min']) {
+        <mat-error>*Minimum of 1</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-flat-button
+      type="submit"
+      class="btn-tertiary"
+      [disabled]="teamForm.invalid || teamForm.disabled"
+      (click)="onSubmit()"
+    >
+      Generate Teams
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="teamForm.disabled"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</form>

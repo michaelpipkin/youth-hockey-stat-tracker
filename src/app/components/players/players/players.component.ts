@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +26,7 @@ import { UserService } from '@services/user.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { ClearSelectDirective } from '@shared/directives/clear-select.directive';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
-import { CreatePlayerComponent } from '../create-player/create-player.component';
+import { AddPlayerComponent } from '../add-player/add-player.component';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
 import {
   Component,
@@ -56,6 +56,7 @@ import {
     MatCheckboxModule,
     DatePipe,
     YesNoPipe,
+    DecimalPipe,
     ClearSelectDirective,
   ],
   templateUrl: './players.component.html',
@@ -152,14 +153,14 @@ export class PlayersComponent {
     });
   }
 
-  createPlayer(): void {
+  addNewPlayer(): void {
     const dialogConfig: MatDialogConfig = {
       data: {
         user: this.#user(),
         program: this.currentProgram(),
       },
     };
-    const dialogRef = this.dialog.open(CreatePlayerComponent, dialogConfig);
+    const dialogRef = this.dialog.open(AddPlayerComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((res) => {
       if (res.success) {
         this.snackBar.open(`Player created`, 'Close');
@@ -205,7 +206,7 @@ export class PlayersComponent {
     });
   }
 
-  addPlayer(player: Player): void {
+  addPlayerToProgram(player: Player): void {
     this.playerService
       .addPlayerToProgram(player.id, this.currentProgram().id)
       .catch((err: Error) => {

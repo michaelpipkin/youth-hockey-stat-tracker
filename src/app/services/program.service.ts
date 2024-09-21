@@ -31,7 +31,6 @@ export class ProgramService {
   evaluationService = inject(EvaluationService);
 
   userPrograms = signal<Program[]>([]);
-  currentProgramCoaches = signal<Guardian[]>([]);
 
   activeUserProgram = computed(() => {
     const activeProgram = this.userPrograms().find((p) => p.active);
@@ -54,29 +53,6 @@ export class ProgramService {
       this.userPrograms.set(
         snapshot.docs.map((doc) => new Program({ id: doc.id, ...doc.data() }))
       );
-    });
-  }
-
-  getProgramCoaches(programId: string): void {
-    const guardianCollection = collection(this.fs, 'guardians');
-    const q = query(
-      guardianCollection,
-      where('programId', '==', programId),
-      where('parentCoach', '==', true),
-      orderBy('lastName', 'asc'),
-      orderBy('firstName', 'asc')
-    );
-    let coachesList: Guardian[] = [];
-    onSnapshot(q, (snapshot) => {
-      snapshot.forEach((doc) => {
-        const playerData = doc.data();
-        playerData.guardians.forEach((guardian: Guardian) => {
-          if (guardian.availableCoachRole !== Coach.N) {
-            coachesList.push(new Guardian({ id: doc.id, ...guardian }));
-          }
-        });
-      });
-      this.currentProgramCoaches.set(coachesList);
     });
   }
 
@@ -128,10 +104,52 @@ export class ProgramService {
       });
     });
     batch.update(doc(this.fs, `programs/${programId}`), { active: true });
-    batch.commit();
+    // Commit the batch
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
   }
 
   async deleteProgram(programId: string): Promise<any> {
-    // TODO: Implement deleteProgram method
+    const programRef = doc(this.fs, `programs/${programId}`);
+    const teamsQuery = query(
+      collection(this.fs, `programs/${programId}/teams`)
+    );
+    const playersQuery = query(
+      collection(this.fs, 'players'),
+      where('programRef', '==', programRef)
+    );
+
+    const batch = writeBatch(this.fs);
+
+    // Delete all teams under the program
+    const teamsSnapshot = await getDocs(teamsQuery);
+    teamsSnapshot.forEach((teamDoc) => {
+      batch.delete(teamDoc.ref);
+    });
+
+    // Update all player documents that refer to the program
+    const playersSnapshot = await getDocs(playersQuery);
+    playersSnapshot.forEach((playerDoc) => {
+      batch.update(playerDoc.ref, { teamRef: null, programRef: null });
+    });
+
+    // Delete the program
+    batch.delete(programRef);
+
+    // Commit the batch
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
   }
 }

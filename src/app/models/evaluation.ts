@@ -1,12 +1,15 @@
+import { Timestamp } from '@angular/fire/firestore';
 import { EvaluationCategory } from '@shared/enums';
 
 export interface IEvaluation {
   id: string;
   evaluatorName: string;
-  evaluationDate: Date;
-  scores: [
-    { category: EvaluationCategory; tryoutNumber: string; score: number }
-  ];
+  evaluationDate: Timestamp;
+  scores: {
+    category: EvaluationCategory;
+    tryoutNumber: string;
+    score: number;
+  }[];
 }
 
 export class Evaluation implements IEvaluation {
@@ -15,10 +18,12 @@ export class Evaluation implements IEvaluation {
   }
   public id: string;
   public evaluatorName: string;
-  public evaluationDate: Date;
-  public scores: [
-    { category: EvaluationCategory; tryoutNumber: string; score: number }
-  ];
+  public evaluationDate: Timestamp;
+  public scores: {
+    category: EvaluationCategory;
+    tryoutNumber: string;
+    score: number;
+  }[];
 }
 
 export class EvaluationResult {

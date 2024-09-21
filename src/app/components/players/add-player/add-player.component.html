@@ -110,11 +110,21 @@
         <mat-error>*Required</mat-error>
         }
       </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Preferred Pronouns</mat-label>
+        <input matInput formControlName="pronouns" />
+      </mat-form-field>
     </div>
     <div class="section-5">
       <mat-form-field appearance="fill" class="important-info">
         <mat-label>Important Info</mat-label>
         <input matInput formControlName="importantInfo" />
+      </mat-form-field>
+    </div>
+    <div class="section-6">
+      <mat-form-field appearance="fill" class="jersey-number">
+        <mat-label>Tryout #</mat-label>
+        <input matInput formControlName="tryoutNumber" />
       </mat-form-field>
       <mat-checkbox formControlName="addToProgram">
         Add to {{ program.name }}

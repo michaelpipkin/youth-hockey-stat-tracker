@@ -51,11 +51,11 @@ import {
     FormatPhoneDirective,
     MatCheckboxModule,
   ],
-  templateUrl: './create-player.component.html',
-  styleUrl: './create-player.component.scss',
+  templateUrl: './add-player.component.html',
+  styleUrl: './add-player.component.scss',
 })
-export class CreatePlayerComponent {
-  dialogRef = inject(MatDialogRef<CreatePlayerComponent>);
+export class AddPlayerComponent {
+  dialogRef = inject(MatDialogRef<AddPlayerComponent>);
   fb = inject(FormBuilder);
   fs = inject(Firestore);
   playerService = inject(PlayerService);
@@ -75,6 +75,7 @@ export class CreatePlayerComponent {
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     gender: [null, Validators.required],
+    pronouns: [''],
     birthDate: [null, Validators.required],
     street1: ['', Validators.required],
     street2: [''],
@@ -85,6 +86,7 @@ export class CreatePlayerComponent {
     goalie: [Goalie.N, Validators.required],
     tShirtSize: [TShirtSize.U, Validators.required],
     importantInfo: [''],
+    tryoutNumber: [''],
     addToProgram: true,
     guardians: this.fb.array(
       [this.createGuardianFormGroup()],
@@ -125,6 +127,7 @@ export class CreatePlayerComponent {
       firstName: formValues.firstName,
       lastName: formValues.lastName,
       gender: formValues.gender,
+      pronouns: formValues.pronouns,
       birthDate: formValues.birthDate,
       address: {
         street1: formValues.street1,
@@ -138,7 +141,7 @@ export class CreatePlayerComponent {
       tShirtSize: formValues.tShirtSize,
       importantInfo: formValues.importantInfo,
       teamRef: null,
-      tryoutNumber: '',
+      tryoutNumber: formValues.tryoutNumber,
       jerseyNumber: '',
       evaluationScore: 0,
       totalLooks: 0,
@@ -154,13 +157,13 @@ export class CreatePlayerComponent {
       });
     });
     await this.playerService
-      .createPlayer(
+      .addPlayer(
         newPlayer,
         guardians,
         formValues.addToProgram ? this.program.id : ''
       )
       .then(() => {
-        this.dialogRef.close(true);
+        this.dialogRef.close({ success: true });
       })
       .catch((err: Error) => {
         logEvent(this.analytics, 'error', {

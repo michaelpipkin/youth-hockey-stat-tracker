@@ -61,6 +61,11 @@ export class AddTeamComponent {
     const newTeam: Partial<Team> = {
       name: formValues.name,
       description: formValues.description,
+      headCoachRef: null,
+      assistantCoach1Ref: null,
+      assistantCoach2Ref: null,
+      managerRef: null,
+      otherCoaches: '',
     };
     this.teamService
       .addTeam(this.program.id, newTeam)

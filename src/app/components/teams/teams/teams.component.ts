@@ -17,9 +17,12 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { TeamService } from '@services/team.service';
 import { UserService } from '@services/user.service';
+import { CoachRolePipe } from '@shared/pipes/coach-role.pipe';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddTeamComponent } from '../add-team/add-team.component';
 import { EditTeamComponent } from '../edit-team/edit-team.component';
+import { GenerateTeamsComponent } from '../generate-teams/generate-teams.component';
+import { TransferPlayerComponent } from '../transfer-player/transfer-player.component';
 
 @Component({
   selector: 'app-teams',
@@ -31,6 +34,7 @@ import { EditTeamComponent } from '../edit-team/edit-team.component';
     MatTooltipModule,
     YesNoPipe,
     DecimalPipe,
+    CoachRolePipe,
   ],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
@@ -50,7 +54,7 @@ export class TeamsComponent {
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
 
   public getTeamPlayers(teamId: string): Player[] {
-    return this.players().filter((p) => p.teamRef.id === teamId);
+    return this.players().filter((p) => p.teamRef?.id === teamId);
   }
 
   addTeam(): void {
@@ -68,7 +72,22 @@ export class TeamsComponent {
     });
   }
 
-  editTeam(team: Team): void {
+  generateTeams(): void {
+    const dialogConfig: MatDialogConfig = {
+      data: {
+        program: this.currentProgram(),
+      },
+    };
+    const dialogRef = this.dialog.open(GenerateTeamsComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res.success) {
+        this.snackBar.open(`Teams generated`, 'Close');
+      }
+    });
+  }
+
+  async editTeam(team: Team): Promise<void> {
+    await this.teamService.getTeamCoaches(this.currentProgram().id, team.id);
     const dialogConfig: MatDialogConfig = {
       data: {
         user: this.#user(),
@@ -100,11 +119,26 @@ export class TeamsComponent {
   }
 
   removePlayer(player: Player): void {
-    //TODO: implement remove player
+    this.playerService.removePlayerFromTeam(player).then(() => {
+      this.snackBar.open('Player removed from team', 'Close');
+      this.teamService.getProgramTeams(this.currentProgram().id);
+    });
   }
 
-  movePlayer(player: Player): void {
-    //TODO: implement move player
+  transferPlayer(player: Player): void {
+    const dialogConfig: MatDialogConfig = {
+      data: {
+        player: player,
+        teams: this.teams().filter((t) => t.id !== player.teamRef.id),
+      },
+    };
+    const dialogRef = this.dialog.open(TransferPlayerComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res.success) {
+        this.snackBar.open(`Player transferred`, 'Close');
+        this.teamService.getProgramTeams(this.currentProgram().id);
+      }
+    });
   }
 
   showHelp(): void {

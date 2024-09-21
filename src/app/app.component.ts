@@ -11,6 +11,7 @@ import { FooterComponent } from '@components/footer/footer.component';
 import { Program } from '@models/program';
 import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
+import { LoadingComponent } from './shared/loading/loading.component';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ import { UserService } from '@services/user.service';
     MatIconModule,
     MatToolbarModule,
     MatMenuModule,
+    LoadingComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

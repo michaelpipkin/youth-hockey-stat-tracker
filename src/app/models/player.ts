@@ -1,5 +1,6 @@
+import { Timestamp } from '@angular/fire/firestore';
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
-import { DocumentReference, Timestamp } from 'firebase/firestore';
+import { DocumentReference } from 'firebase/firestore';
 import { IAddress } from './address';
 import { IGuardian } from './guardian';
 
@@ -8,6 +9,7 @@ export interface IPlayer {
   firstName: string;
   lastName: string;
   gender: Gender;
+  pronouns: string;
   birthDate: Timestamp;
   address: IAddress;
   guardians: IGuardian[];
@@ -31,6 +33,7 @@ export class Player implements IPlayer {
   public firstName: string;
   public lastName: string;
   public gender: Gender;
+  public pronouns: string;
   public birthDate: Timestamp;
   public address: IAddress;
   public guardians: IGuardian[];
@@ -60,9 +63,33 @@ export class Player implements IPlayer {
   public get lastFirstName(): string {
     return `${this.lastName}, ${this.firstName}`;
   }
-  public get parentCoach(): boolean {
-    return this.guardians.some(
-      (guardian) => guardian.availableCoachRole !== Coach.N
+  public get parentCoach(): Coach | null {
+    const guardian = this.guardians.find(
+      (g) => g.availableCoachRole !== Coach.N
+    );
+    return guardian ? guardian.availableCoachRole : null;
+  }
+
+  public get rosterName(): string {
+    let name = `${this.firstName} ${this.lastName}`;
+    if (this.goalie === Goalie.Y || this.goalie === Goalie.M) {
+      name += ' (G)';
+    }
+    const coachRole = this.parentCoach;
+    if (coachRole) {
+      const coachRoleKey = Object.keys(Coach).find(
+        (key) => Coach[key as keyof typeof Coach] === coachRole
+      );
+      if (coachRoleKey) {
+        name += ` (${coachRoleKey})`;
+      }
+    }
+    return name;
+  }
+
+  public get genderCode(): string {
+    return Object.keys(Gender).find(
+      (key) => Gender[key as keyof typeof Gender] === this.gender
     );
   }
 }

@@ -15,7 +15,7 @@ export enum TShirtSize {
 export enum Gender {
   F = 'Female',
   M = 'Male',
-  O = 'Other',
+  N = 'Non-binary',
 }
 
 export enum Goalie {

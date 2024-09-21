@@ -11,7 +11,9 @@ import {
   Firestore,
   getDocs,
   onSnapshot,
+  orderBy,
   query,
+  updateDoc,
   where,
   writeBatch,
 } from '@angular/fire/firestore';
@@ -24,11 +26,12 @@ export class EvaluationService {
 
   programEvaluations = signal<Evaluation[]>([]);
 
-  async processPlayerEvaluations(programId: string): Promise<any> {
+  async processEvaluations(programId: string): Promise<any> {
     const batch = writeBatch(this.fs);
+    const programRef = doc(this.fs, `programs/${programId}`);
     const playersQuery = query(
       collection(this.fs, 'players'),
-      where('programId', '==', programId)
+      where('programRef', '==', programRef)
     );
     const players: Player[] = await getDocs(playersQuery).then((snapshot) => {
       return snapshot.docs.map((doc) => {
@@ -36,7 +39,7 @@ export class EvaluationService {
       });
     });
     const evaluations: Evaluation[] = await getDocs(
-      collection(this.fs, `program/${programId}/evaluations`)
+      collection(this.fs, `programs/${programId}/evaluations`)
     ).then((snapshot) => {
       return snapshot.docs.map((doc) => {
         return new Evaluation({ id: doc.id, ...doc.data() });
@@ -76,8 +79,13 @@ export class EvaluationService {
   }
 
   async getEvaluations(programId: string): Promise<any> {
-    const evals = collection(this.fs, `program/${programId}/evaluations`);
-    onSnapshot(evals, (snapshot) => {
+    const evals = collection(this.fs, `programs/${programId}/evaluations`);
+    const evalQuery = query(
+      evals,
+      orderBy('evaluationDate', 'desc'),
+      orderBy('evaluatorName', 'asc')
+    );
+    onSnapshot(evalQuery, (snapshot) => {
       this.programEvaluations.set(
         snapshot.docs.map(
           (doc) => new Evaluation({ id: doc.id, ...doc.data() })
@@ -90,41 +98,20 @@ export class EvaluationService {
     programId: string,
     evaluation: Partial<Evaluation>
   ): Promise<any> {
-    const c = collection(this.fs, `program/${programId}/evaluations`);
-    const q = query(
-      c,
-      where('evaluatorName', '==', evaluation.evaluatorName),
-      where('evaluationDate', '==', evaluation.evaluationDate)
-    );
-    return await getDocs(q).then(async (snapshot) => {
-      if (!snapshot.empty) {
-        throw new Error(
-          'An evaluation with this evaluator and date already exists.'
-        );
-      }
-      return await addDoc(c, evaluation);
-    });
+    const c = collection(this.fs, `programs/${programId}/evaluations`);
+    return await addDoc(c, evaluation);
   }
 
   async updateEvaluation(
     programId: string,
+    evaluationId: string,
     evaluation: Partial<Evaluation>
   ): Promise<any> {
-    const c = collection(this.fs, `program/${programId}/evaluations`);
-    const q = query(
-      c,
-      where('evaluatorName', '==', evaluation.evaluatorName),
-      where('evaluationDate', '==', evaluation.evaluationDate),
-      where(documentId(), '!=', evaluation.id)
+    const evaluationDoc = doc(
+      this.fs,
+      `programs/${programId}/evaluations/${evaluationId}`
     );
-    return await getDocs(q).then(async (snapshot) => {
-      if (!snapshot.empty) {
-        throw new Error(
-          'An evaluation with this evaluator and date already exists.'
-        );
-      }
-      return await addDoc(c, evaluation);
-    });
+    return await updateDoc(evaluationDoc, evaluation);
   }
 
   async deleteEvaluation(
@@ -132,7 +119,7 @@ export class EvaluationService {
     evaluationId: string
   ): Promise<any> {
     return await deleteDoc(
-      doc(this.fs, `program/${programId}/evaluations/${evaluationId}`)
+      doc(this.fs, `programs/${programId}/evaluations/${evaluationId}`)
     );
   }
 }

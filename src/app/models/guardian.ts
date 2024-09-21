@@ -9,7 +9,6 @@ export interface IGuardian {
   email: string;
   phone: string;
   availableCoachRole: Coach;
-  coachRole: Coach;
 }
 
 export class Guardian implements IGuardian {
@@ -23,7 +22,6 @@ export class Guardian implements IGuardian {
   public email: string;
   public phone: string;
   public availableCoachRole: Coach;
-  public coachRole: Coach;
   public get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }

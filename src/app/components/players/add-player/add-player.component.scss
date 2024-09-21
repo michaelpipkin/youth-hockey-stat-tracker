@@ -21,14 +21,21 @@
 
 .section-4 {
   display: grid;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: max-content max-content max-content max-content;
   align-items: center;
   column-gap: 8px;
 }
 
 .section-5 {
   display: grid;
-  grid-template-columns: auto max-content;
+  grid-template-columns: auto;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.section-6 {
+  display: grid;
+  grid-template-columns: max-content max-content;
   align-items: center;
   column-gap: 8px;
 }

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,9 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
-import { Program } from '@models/program';
 import { Team } from '@models/team';
 import { GuardianService } from '@services/guardian.service';
 import { PlayerService } from '@services/player.service';
@@ -22,7 +19,7 @@ import { TeamService } from '@services/team.service';
 import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.component';
 import { FormatPhoneDirective } from '@shared/directives/format-phone.directive';
 import { Coach, Gender, Goalie, TShirtSize } from '@shared/enums';
-import { CreatePlayerComponent } from '../create-player/create-player.component';
+import { AddPlayerComponent } from '../add-player/add-player.component';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -60,7 +57,7 @@ import {
   styleUrl: './edit-player.component.scss',
 })
 export class EditPlayerComponent {
-  dialogRef = inject(MatDialogRef<CreatePlayerComponent>);
+  dialogRef = inject(MatDialogRef<AddPlayerComponent>);
   fb = inject(FormBuilder);
   playerService = inject(PlayerService);
   guardianService = inject(GuardianService);
@@ -71,7 +68,6 @@ export class EditPlayerComponent {
   data = inject(MAT_DIALOG_DATA);
   player: Player = this.data.player;
 
-  guardians: Signal<Guardian[]> = this.guardianService.currentPlayerGuardians;
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
 
   genderOptions = Object.values(Gender);
@@ -83,6 +79,7 @@ export class EditPlayerComponent {
     firstName: [this.player.firstName, Validators.required],
     lastName: [this.player.lastName, Validators.required],
     gender: [this.player.gender, Validators.required],
+    pronouns: [this.player.pronouns],
     birthDate: [this.player.birthDate.toDate(), Validators.required],
     street1: [this.player.address.street1, Validators.required],
     street2: [this.player.address.street2],
@@ -104,12 +101,20 @@ export class EditPlayerComponent {
       Validators.pattern('^[0-9]{1,3}$'),
     ],
     jerseyNumber: [
-      this.player.jerseyNumber,
+      {
+        value: this.player.jerseyNumber,
+        disabled: this.player.programRef === null,
+      },
       Validators.pattern('^[0-9]{1,3}$'),
     ],
-    teamId: [this.player.teamRef?.id],
+    teamId: [
+      {
+        value: this.player.teamRef?.id,
+        disabled: this.player.programRef === null,
+      },
+    ],
     guardians: this.fb.array(
-      this.guardians().map((guardian) =>
+      this.player.guardians.map((guardian) =>
         this.fb.group({
           id: [guardian.id],
           firstName: [guardian.firstName, Validators.required],
@@ -157,43 +162,51 @@ export class EditPlayerComponent {
 
   onSubmit(): void {
     this.playerForm.disable();
-    const formValues = this.playerForm.value;
+    const playerData = this.playerForm.value;
     let guardians = [];
-    formValues.guardians.forEach((guardianForm: any) => {
+    playerData.guardians.forEach((guardianForm: any) => {
       guardians.push({
         id: guardianForm.id,
         firstName: guardianForm.firstName,
         lastName: guardianForm.lastName,
         email: guardianForm.email,
         phone: guardianForm.phone,
-        coachManager: guardianForm.coachManager,
+        availableCoachRole: guardianForm.coachManager,
       });
     });
     const player: Partial<Player> = {
-      id: this.player.id,
-      firstName: formValues.firstName,
-      lastName: formValues.lastName,
-      gender: formValues.gender,
-      birthDate: formValues.birthDate as unknown as Timestamp,
+      firstName: playerData.firstName,
+      lastName: playerData.lastName,
+      gender: playerData.gender,
+      pronouns: playerData.pronouns,
+      birthDate: playerData.birthDate as unknown as Timestamp,
       address: {
-        street1: formValues.street1,
-        street2: formValues.street2,
-        city: formValues.city,
-        state: formValues.state,
-        zipCode: formValues.zipCode,
+        street1: playerData.street1,
+        street2: playerData.street2,
+        city: playerData.city,
+        state: playerData.state,
+        zipCode: playerData.zipCode,
       },
-      goalie: formValues.goalie,
-      usaHockeyNumber: formValues.usaHockeyNumber,
-      tShirtSize: formValues.tShirtSize,
-      importantInfo: formValues.importantInfo,
-      tryoutNumber: formValues.tryoutNumber,
-      jerseyNumber: formValues.jerseyNumber,
+      goalie: playerData.goalie,
+      usaHockeyNumber: playerData.usaHockeyNumber,
+      tShirtSize: playerData.tShirtSize,
+      importantInfo: playerData.importantInfo,
+      tryoutNumber: playerData.tryoutNumber,
+      jerseyNumber: playerData.jerseyNumber,
       programRef: this.player.programRef,
     };
     this.playerService
-      .updatePlayer(player, guardians, formValues.teamId)
+      .updatePlayer(
+        this.player.id,
+        player,
+        guardians,
+        !!playerData.teamId ? playerData.teamId : ''
+      )
       .then(() => {
-        this.dialogRef.close(true);
+        this.dialogRef.close({
+          success: true,
+          operation: 'updated',
+        });
       })
       .catch((err: Error) => {
         logEvent(this.analytics, 'error', {
@@ -215,8 +228,11 @@ export class EditPlayerComponent {
         target: `player: ${this.player.fullName}`,
       },
     };
-    const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirm) => {
+    const deleteDialogRef = this.dialog.open(
+      DeleteDialogComponent,
+      dialogConfig
+    );
+    deleteDialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
         this.playerService
           .deletePlayer(this.player.id)

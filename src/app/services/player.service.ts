@@ -3,10 +3,7 @@ import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
 import { GuardianService } from './guardian.service';
 import {
-  addDoc,
-  arrayUnion,
   collection,
-  deleteDoc,
   doc,
   documentId,
   DocumentReference,
@@ -35,14 +32,31 @@ export class PlayerService {
     const programRef = doc(this.fs, `programs/${programId}`);
     const playerQuery = query(
       collection(this.fs, `players`),
-      where('program', 'in', [programRef, null]),
+      where('programRef', '==', programRef),
       orderBy('lastName', 'asc'),
       orderBy('firstName', 'asc')
     );
 
-    onSnapshot(playerQuery, async (snapshot) => {
+    const unassignedPlayerQuery = query(
+      collection(this.fs, `players`),
+      where('programRef', '==', null),
+      orderBy('lastName', 'asc'),
+      orderBy('firstName', 'asc')
+    );
+
+    const [assignedPlayersSnapshot, unassignedPlayersSnapshot] =
+      await Promise.all([getDocs(playerQuery), getDocs(unassignedPlayerQuery)]);
+
+    const combinedSnapshot = {
+      docs: [
+        ...assignedPlayersSnapshot.docs,
+        ...unassignedPlayersSnapshot.docs,
+      ],
+    };
+
+    const processSnapshot = async (snapshot: any) => {
       const players = await Promise.all(
-        snapshot.docs.map(async (playerDoc) => {
+        snapshot.docs.map(async (playerDoc: any) => {
           const playerData = playerDoc.data();
           const guardiansCollection = collection(
             this.fs,
@@ -78,6 +92,23 @@ export class PlayerService {
         })
       );
       this.currentProgramPlayers.set(players);
+    };
+
+    // Process the combined snapshot initially
+    await processSnapshot(combinedSnapshot);
+
+    // Listen for changes in the assigned players query
+    onSnapshot(playerQuery, async (snapshot) => {
+      if (!snapshot.empty) {
+        await processSnapshot(snapshot);
+      }
+    });
+
+    // Listen for changes in the unassigned players query
+    onSnapshot(unassignedPlayerQuery, async (snapshot) => {
+      if (!snapshot.empty) {
+        await processSnapshot(snapshot);
+      }
     });
   }
 
@@ -148,7 +179,7 @@ export class PlayerService {
     return new Player({ id: playerDoc.id, ...playerData, guardians });
   }
 
-  async createPlayer(
+  async addPlayer(
     player: Partial<Player>,
     guardians: Partial<Guardian>[],
     programId: string = ''
@@ -209,44 +240,61 @@ export class PlayerService {
   }
 
   async updatePlayer(
+    playerId: string,
     player: Partial<Player>,
     guardians: Partial<Guardian>[],
     teamId: string = ''
   ): Promise<any> {
-    if (teamId !== '') {
-      player.teamRef = doc(
-        this.fs,
-        `programs/${player.programRef.id}/teams/${teamId}`
-      );
-    }
+    // If a teamId is provided, set the teamRef for the player
+    player.teamRef =
+      teamId === ''
+        ? null
+        : doc(this.fs, `programs/${player.programRef.id}/teams/${teamId}`);
+
+    // Create a reference to the players collection
     const coll = collection(this.fs, 'players');
+
+    // Query to check for existing players with the same first name, last name, and birth date
     const q1 = query(
       coll,
       where('firstName', '==', player.firstName),
       where('lastName', '==', player.lastName),
       where('birthDate', '==', player.birthDate),
-      where(documentId(), '!=', player.id)
+      where(documentId(), '!=', playerId)
     );
 
+    // Query to check for existing players with the same tryout number in the same program
     const q2 = query(
       coll,
       where('programRef', '==', player.programRef),
       where('tryoutNumber', '==', player.tryoutNumber),
-      where(documentId(), '!=', player.id)
+      where(documentId(), '!=', playerId)
     );
+
+    // Query to check for existing players with the same jersey number on the same team
     const q3 = query(
       coll,
       where('teamRef', '==', player.teamRef),
       where('jerseyNumber', '==', player.jerseyNumber),
-      where(documentId(), '!=', player.id)
+      where(documentId(), '!=', playerId)
     );
+
+    // Check if a player with the same name and birth date already exists
     if (!(await getDocs(q1)).empty) {
       throw new Error('A player with this name and birth date already exists.');
-    } else if (player.tryoutNumber !== '' && !(await getDocs(q2)).empty) {
+    }
+    // Check if a player with the same tryout number already exists in the program
+    if (
+      player.programRef !== null &&
+      player.tryoutNumber !== '' &&
+      !(await getDocs(q2)).empty
+    ) {
       throw new Error(
         'A player with this tryout number already exists in this program.'
       );
-    } else if (
+    }
+    // Check if a player with the same jersey number already exists on the same team
+    if (
       player.teamRef !== null &&
       player.jerseyNumber !== '' &&
       !(await getDocs(q3)).empty
@@ -257,13 +305,13 @@ export class PlayerService {
     }
     const batch = writeBatch(this.fs);
     // Update the player document
-    const playerDocRef = doc(this.fs, `players/${player.id}`);
+    const playerDocRef = doc(this.fs, `players/${playerId}`);
     batch.update(playerDocRef, player);
 
     // Get existing guardians from the collection
     const guardiansCollection = collection(
       this.fs,
-      `players/${player.id}/guardians`
+      `players/${playerId}/guardians`
     );
     const existingGuardiansSnapshot = await getDocs(guardiansCollection);
 
@@ -295,35 +343,43 @@ export class PlayerService {
     });
 
     // Check for references to guardians in team documents and remove them
-    const teamsCollection = collection(
-      this.fs,
-      `programs/${player.programRef.id}/teams`
-    );
-    const teamsSnapshot = await getDocs(teamsCollection);
-    teamsSnapshot.forEach((teamDoc) => {
-      const teamData = teamDoc.data();
-      const teamDocRef = doc(this.fs, `teams/${teamDoc.id}`);
-      let updateRequired = false;
-      const updates: any = {};
+    if (!!player.programRef) {
+      const teamsCollection = collection(
+        this.fs,
+        `programs/${player.programRef.id}/teams`
+      );
+      const teamsSnapshot = await getDocs(teamsCollection);
+      teamsSnapshot.forEach((teamDoc) => {
+        const teamData = teamDoc.data();
+        const teamDocRef = doc(
+          this.fs,
+          `programs/${player.programRef.id}/teams/${teamDoc.id}`
+        );
+        let updateRequired = false;
+        const updates: any = {};
 
-      ['headCoach', 'assistantCoach1', 'assistantCoach2', 'manager'].forEach(
-        (coachField) => {
+        [
+          'headCoachRef',
+          'assistantCoach1Ref',
+          'assistantCoach2Ref',
+          'managerRef',
+        ].forEach((coachField) => {
           if (
             teamData[coachField]?.id &&
             existingGuardiansSnapshot.docs.some(
               (guardianDoc) => guardianDoc.id === teamData[coachField].id
             )
           ) {
-            updates[coachField] = {};
+            updates[coachField] = null;
             updateRequired = true;
           }
-        }
-      );
+        });
 
-      if (updateRequired) {
-        batch.update(teamDocRef, updates);
-      }
-    });
+        if (updateRequired) {
+          batch.update(teamDocRef, updates);
+        }
+      });
+    }
 
     // Commit the batch
     return await batch
@@ -370,19 +426,22 @@ export class PlayerService {
         let updateRequired = false;
         const updates: any = {};
 
-        ['headCoach', 'assistantCoach1', 'assistantCoach2', 'manager'].forEach(
-          (coachField) => {
-            if (
-              teamData[coachField]?.id &&
-              guardiansSnapshot.docs.some(
-                (guardianDoc) => guardianDoc.id === teamData[coachField].id
-              )
-            ) {
-              updates[coachField] = {};
-              updateRequired = true;
-            }
+        [
+          'headCoachRef',
+          'assistantCoach1Ref',
+          'assistantCoach2Ref',
+          'managerRef',
+        ].forEach((coachField) => {
+          if (
+            teamData[coachField]?.id &&
+            guardiansSnapshot.docs.some(
+              (guardianDoc) => guardianDoc.id === teamData[coachField].id
+            )
+          ) {
+            updates[coachField] = {};
+            updateRequired = true;
           }
-        );
+        });
 
         if (updateRequired) {
           batch.update(teamDocRef, updates);
@@ -474,17 +533,20 @@ export class PlayerService {
       let updateRequired = false;
       const updates: any = {};
 
-      ['headCoach', 'assistantCoach1', 'assistantCoach2', 'manager'].forEach(
-        (coachField) => {
-          if (
-            teamData[coachField]?.id &&
-            guardianIds.includes(teamData[coachField].id)
-          ) {
-            updates[coachField] = {};
-            updateRequired = true;
-          }
+      [
+        'headCoachRef',
+        'assistantCoach1Ref',
+        'assistantCoach2Ref',
+        'managerRef',
+      ].forEach((coachField) => {
+        if (
+          teamData[coachField]?.id &&
+          guardianIds.includes(teamData[coachField].id)
+        ) {
+          updates[coachField] = {};
+          updateRequired = true;
         }
-      );
+      });
 
       if (updateRequired) {
         batch.update(teamDocRef, updates);
@@ -527,14 +589,17 @@ export class PlayerService {
       let updateRequired = false;
       const updates: any = {};
 
-      ['headCoach', 'assistantCoach1', 'assistantCoach2', 'manager'].forEach(
-        (coachField) => {
-          if (teamData[coachField]?.id) {
-            updates[coachField] = {};
-            updateRequired = true;
-          }
+      [
+        'headCoachRef',
+        'assistantCoach1Ref',
+        'assistantCoach2Ref',
+        'managerRef',
+      ].forEach((coachField) => {
+        if (teamData[coachField]?.id) {
+          updates[coachField] = {};
+          updateRequired = true;
         }
-      );
+      });
 
       if (updateRequired) {
         batch.update(teamDocRef, updates);
@@ -552,23 +617,25 @@ export class PlayerService {
       });
   }
 
-  async removePlayerFromTeam(
-    playerId: string,
-    teamRef: DocumentReference
-  ): Promise<any> {
+  async removePlayerFromTeam(player: Player): Promise<any> {
     const batch = writeBatch(this.fs);
-    const playerRef = doc(this.fs, `players/${playerId}`);
+
+    const playerRef = doc(this.fs, `players/${player.id}`);
+    const teamRef = doc(
+      this.fs,
+      `programs/${player.programRef.id}/teams/${player.teamRef.id}`
+    );
 
     // Update player document
     batch.update(playerRef, {
-      team: null,
+      teamRef: null,
       jerseyNumber: '',
     });
 
     // Get guardians collection under the player
     const guardiansCollection = collection(
       this.fs,
-      `players/${playerId}/guardians`
+      `players/${player.id}/guardians`
     );
     const guardiansSnapshot = await getDocs(guardiansCollection);
     const guardianIds = guardiansSnapshot.docs.map((doc) => doc.id);
@@ -579,20 +646,85 @@ export class PlayerService {
     let updateRequired = false;
     const updates: any = {};
 
-    ['headCoach', 'assistantCoach1', 'assistantCoach2', 'manager'].forEach(
-      (coachField) => {
-        if (
-          teamData[coachField]?.id &&
-          guardianIds.includes(teamData[coachField].id)
-        ) {
-          updates[coachField] = {};
-          updateRequired = true;
-        }
+    [
+      'headCoachRef',
+      'assistantCoach1Ref',
+      'assistantCoach2Ref',
+      'managerRef',
+    ].forEach((coachField) => {
+      if (
+        teamData[coachField]?.id &&
+        guardianIds.includes(teamData[coachField].id)
+      ) {
+        updates[coachField] = null;
+        updateRequired = true;
       }
-    );
+    });
 
     if (updateRequired) {
       batch.update(teamRef, updates);
+    }
+
+    // Commit the batch
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
+  }
+
+  async transferPlayer(player: Player, teamId: string): Promise<any> {
+    const batch = writeBatch(this.fs);
+
+    const playerRef = doc(this.fs, `players/${player.id}`);
+    const newTeamRef = doc(
+      this.fs,
+      `programs/${player.programRef.id}/teams/${teamId}`
+    );
+    const oldTeamRef = player.teamRef;
+
+    // Update player document
+    batch.update(playerRef, {
+      teamRef: newTeamRef,
+      jerseyNumber: '',
+    });
+
+    // Get guardians collection under the player
+    const guardiansCollection = collection(
+      this.fs,
+      `players/${player.id}/guardians`
+    );
+    const guardiansSnapshot = await getDocs(guardiansCollection);
+    const guardianIds = guardiansSnapshot.docs.map((doc) => doc.id);
+
+    // Check for references to guardians in the old team document and remove them
+    if (oldTeamRef) {
+      const oldTeamDoc = await getDoc(oldTeamRef);
+      const oldTeamData = oldTeamDoc.data();
+      let updateRequired = false;
+      const updates: any = {};
+
+      [
+        'headCoachRef',
+        'assistantCoach1Ref',
+        'assistantCoach2Ref',
+        'managerRef',
+      ].forEach((coachField) => {
+        if (
+          oldTeamData[coachField]?.id &&
+          guardianIds.includes(oldTeamData[coachField].id)
+        ) {
+          updates[coachField] = null;
+          updateRequired = true;
+        }
+      });
+
+      if (updateRequired) {
+        batch.update(oldTeamRef, updates);
+      }
     }
 
     // Commit the batch
@@ -627,6 +759,62 @@ export class PlayerService {
       assistantCoach1: null,
       assistantCoach2: null,
       manager: null,
+    });
+
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
+  }
+
+  async distributePlayersToTeams(programId: string): Promise<any> {
+    const programRef = doc(this.fs, `programs/${programId}`);
+    const teamCollection = query(
+      collection(this.fs, `programs/${programId}/teams`),
+      orderBy('name', 'asc')
+    );
+    const teamsSnapshot = await getDocs(teamCollection);
+
+    const playerQuery = query(
+      collection(this.fs, 'players'),
+      where('programRef', '==', programRef),
+      orderBy('evaluationScore', 'desc')
+    );
+    const playersSnapshot = await getDocs(playerQuery);
+
+    const batch = writeBatch(this.fs);
+
+    const teams = teamsSnapshot.docs.map((teamDoc) => ({
+      id: teamDoc.id,
+      ref: teamDoc.ref,
+    }));
+
+    let reverse = false;
+    let teamIndex = 0;
+
+    playersSnapshot.docs.forEach((playerDoc, index) => {
+      const playerRef = playerDoc.ref;
+      const team = teams[teamIndex];
+
+      batch.update(playerRef, { teamRef: team.ref });
+
+      if (reverse) {
+        teamIndex--;
+        if (teamIndex < 0) {
+          teamIndex = 0;
+          reverse = false;
+        }
+      } else {
+        teamIndex++;
+        if (teamIndex >= teams.length) {
+          teamIndex = teams.length - 1;
+          reverse = true;
+        }
+      }
     });
 
     return await batch
