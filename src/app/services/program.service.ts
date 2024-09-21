@@ -152,4 +152,46 @@ export class ProgramService {
         throw new Error(err.message);
       });
   }
+
+  async resetProgram(programId: string): Promise<any> {
+    const programRef = doc(this.fs, `programs/${programId}`);
+    const teamsQuery = query(
+      collection(this.fs, `programs/${programId}/teams`)
+    );
+    const playersQuery = query(
+      collection(this.fs, 'players'),
+      where('programRef', '==', programRef)
+    );
+
+    const batch = writeBatch(this.fs);
+
+    // Delete all teams under the program
+    const teamsSnapshot = await getDocs(teamsQuery);
+    teamsSnapshot.forEach((teamDoc) => {
+      batch.delete(teamDoc.ref);
+    });
+
+    // Update all player documents that refer to the program
+    const playersSnapshot = await getDocs(playersQuery);
+    playersSnapshot.forEach((playerDoc) => {
+      batch.update(playerDoc.ref, {
+        teamRef: null,
+        programRef: null,
+        jerseyNuumber: '',
+        tryoutNumber: '',
+        evaluationScore: 0,
+        totalLooks: 0,
+      });
+    });
+
+    // Commit the batch
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
+  }
 }

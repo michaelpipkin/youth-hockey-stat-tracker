@@ -30,7 +30,7 @@
 .player-details {
   width: 100%;
   display: grid;
-  grid-template-columns: max-content 20px 15px 10px 30px 55px;
+  grid-template-columns: 1fr 20px 15px 10px 30px 55px;
   column-gap: 12px;
   line-height: 1.4rem;
 }

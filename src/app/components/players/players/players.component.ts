@@ -79,6 +79,15 @@ export class PlayersComponent {
   activePrograms = computed(() => this.programs().filter((p) => p.active));
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
 
+  nextTryoutNumber: Signal<string> = computed(() => {
+    const players = this.players().filter((player) => player.tryoutNumber);
+    const nextTryoutNumber =
+      players.length > 0
+        ? Math.max(...players.map((player) => +player.tryoutNumber)) + 1
+        : 1;
+    return `${nextTryoutNumber}`;
+  });
+
   sortField = signal<string>('lastFirstName');
   sortAsc = signal<boolean>(true);
 
@@ -158,6 +167,7 @@ export class PlayersComponent {
       data: {
         user: this.#user(),
         program: this.currentProgram(),
+        nextTryoutNumber: this.nextTryoutNumber(),
       },
     };
     const dialogRef = this.dialog.open(AddPlayerComponent, dialogConfig);

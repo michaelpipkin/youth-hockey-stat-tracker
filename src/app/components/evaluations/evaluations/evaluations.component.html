@@ -31,23 +31,20 @@
           <div class="heading">Skating</div>
           <div class="scores">
             <span class="score"><strong>1</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Skating', 1);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Skating', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>2</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Skating', 2);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Skating', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>3</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Skating', 3);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Skating', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
         </div>
@@ -55,23 +52,23 @@
           <div class="heading">Puck Control</div>
           <div class="scores">
             <span class="score"><strong>1</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Puck Control',
-            1); track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Puck Control', 1); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>2</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Puck Control',
-            2); track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Puck Control', 2); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>3</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Puck Control',
-            3); track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Puck Control', 3); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
         </div>
@@ -79,23 +76,20 @@
           <div class="heading">Shooting</div>
           <div class="scores">
             <span class="score"><strong>1</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Shooting', 1);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Shooting', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>2</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Shooting', 2);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Shooting', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>3</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Shooting', 3);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Shooting', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
         </div>
@@ -103,23 +97,20 @@
           <div class="heading">Game Play</div>
           <div class="scores">
             <span class="score"><strong>1</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Game Play', 1);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Game Play', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>2</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Game Play', 2);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Game Play', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
           <div class="scores">
             <span class="score"><strong>3</strong></span>
-            @for (tryoutNumber of getTryoutNumbers(evaluation, 'Game Play', 3);
-            track tryoutNumber) {
-            <span>{{ tryoutNumber }}</span>
+            @for (score of getScores(evaluation, 'Game Play', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
             }
           </div>
         </div>

@@ -43,15 +43,19 @@ export class EvaluationsComponent {
 
   categories = Object.values(EvaluationCategory);
 
-  getTryoutNumbers(
+  getScores(
     evaluation: Evaluation,
     category: string,
     score: number
-  ): string[] {
-    const tryoutNumbers = evaluation.scores
-      .filter((s) => s.category === category && s.score === score)
-      .map((s) => s.tryoutNumber);
-    return tryoutNumbers;
+  ): {
+    category: EvaluationCategory;
+    tryoutNumber: string;
+    score: number;
+  }[] {
+    const scores = evaluation.scores.filter(
+      (s) => s.category === category && s.score === score
+    );
+    return scores;
   }
 
   downloadForm(): void {

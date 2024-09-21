@@ -86,7 +86,7 @@ export class AddPlayerComponent {
     goalie: [Goalie.N, Validators.required],
     tShirtSize: [TShirtSize.U, Validators.required],
     importantInfo: [''],
-    tryoutNumber: [''],
+    tryoutNumber: [this.data.nextTryoutNumber],
     addToProgram: true,
     guardians: this.fb.array(
       [this.createGuardianFormGroup()],

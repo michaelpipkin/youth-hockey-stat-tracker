@@ -771,6 +771,46 @@ export class PlayerService {
       });
   }
 
+  async clearAllTeamsPlayers(programId: string): Promise<any> {
+    const batch = writeBatch(this.fs);
+
+    // Get all teams in the program
+    const teamsCollection = collection(this.fs, `programs/${programId}/teams`);
+    const teamsSnapshot = await getDocs(teamsCollection);
+
+    // Iterate through each team and clear players
+    for (const teamDoc of teamsSnapshot.docs) {
+      const teamRef = teamDoc.ref;
+
+      // Clear team reference from players
+      const playerQuery = query(
+        collection(this.fs, 'players'),
+        where('teamRef', '==', teamRef)
+      );
+      const playersSnapshot = await getDocs(playerQuery);
+      playersSnapshot.docs.forEach((playerDoc) => {
+        batch.update(playerDoc.ref, { teamRef: null });
+      });
+
+      // Set all four coach fields on the team document to null
+      batch.update(teamRef, {
+        headCoach: null,
+        assistantCoach1: null,
+        assistantCoach2: null,
+        manager: null,
+      });
+    }
+
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
+  }
+
   async distributePlayersToTeams(programId: string): Promise<any> {
     const programRef = doc(this.fs, `programs/${programId}`);
     const teamCollection = query(
