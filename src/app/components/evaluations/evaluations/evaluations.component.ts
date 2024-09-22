@@ -1,14 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HelpComponent } from '@components/help/help.component';
 import { Evaluation } from '@models/evaluation';
 import { Program } from '@models/program';
 import { EvaluationService } from '@services/evaluation.service';
@@ -17,6 +15,7 @@ import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.compo
 import { EvaluationCategory } from '@shared/enums';
 import { AddEvaluationComponent } from '../add-evaluation/add-evaluation.component';
 import { EditEvaluationComponent } from '../edit-evaluation/edit-evaluation.component';
+import { EvaluationsHelpComponent } from '../evaluations-help/evaluations-help.component';
 
 @Component({
   selector: 'app-evaluations',
@@ -128,13 +127,9 @@ export class EvaluationsComponent {
 
   showHelp(): void {
     const dialogConfig: MatDialogConfig = {
-      data: {
-        page: 'teams',
-        title: 'Teams Help',
-      },
       disableClose: false,
       maxWidth: '80vw',
     };
-    this.dialog.open(HelpComponent, dialogConfig);
+    this.dialog.open(EvaluationsHelpComponent, dialogConfig);
   }
 }

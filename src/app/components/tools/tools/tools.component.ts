@@ -5,7 +5,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HelpComponent } from '@components/help/help.component';
 import { Program } from '@models/program';
 import { EvaluationService } from '@services/evaluation.service';
 import { PlayerService } from '@services/player.service';
@@ -13,6 +12,7 @@ import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { LoadingService } from '@shared/loading/loading.service';
+import { ToolsHelpComponent } from '../tools-help/tools-help.component';
 
 @Component({
   selector: 'app-tools',
@@ -183,13 +183,9 @@ export class ToolsComponent {
 
   showHelp(): void {
     const dialogConfig: MatDialogConfig = {
-      data: {
-        page: 'teams',
-        title: 'Teams Help',
-      },
       disableClose: false,
       maxWidth: '80vw',
     };
-    this.dialog.open(HelpComponent, dialogConfig);
+    this.dialog.open(ToolsHelpComponent, dialogConfig);
   }
 }

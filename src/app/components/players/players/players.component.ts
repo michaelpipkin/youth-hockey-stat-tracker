@@ -14,7 +14,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HelpComponent } from '@components/help/help.component';
 import { Player } from '@models/player';
 import { Program } from '@models/program';
 import { Team } from '@models/team';
@@ -29,6 +28,7 @@ import { LoadingService } from '@shared/loading/loading.service';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddPlayerComponent } from '../add-player/add-player.component';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
+import { PlayersHelpComponent } from '../players-help/players-help.component';
 import {
   Component,
   computed,
@@ -200,6 +200,7 @@ export class PlayersComponent {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
+        this.loading.loadingOn();
         const playerIds = this.getCheckedPlayers();
         this.playerService
           .addPlayersToProgram(this.currentProgram().id, playerIds)
@@ -219,6 +220,9 @@ export class PlayersComponent {
               'Something went wrong - could not assign players',
               'Close'
             );
+          })
+          .finally(() => {
+            this.loading.loadingOff();
           });
       }
     });
@@ -261,15 +265,16 @@ export class PlayersComponent {
       data: {
         dialogTitle: 'Confirm Action',
         confirmationText:
-          'This will remove all players from the program. Are you sure you want to continue?',
+          'This will remove all players from the program and delete existing evaluations. Are you sure you want to continue?',
         cancelButtonText: 'No',
         confirmButtonText: 'Yes',
       },
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirm) => {
+    dialogRef.afterClosed().subscribe(async (confirm) => {
       if (confirm) {
-        this.playerService
+        this.loading.loadingOn();
+        await this.playerService
           .clearProgramPlayers(this.currentProgram().id)
           .then(() => {
             this.snackBar.open('All players removed from program', 'Close');
@@ -284,6 +289,9 @@ export class PlayersComponent {
               'Something went wrong - could not clear players',
               'Close'
             );
+          })
+          .finally(() => {
+            this.loading.loadingOff();
           });
       }
     });
@@ -291,13 +299,9 @@ export class PlayersComponent {
 
   showHelp(): void {
     const dialogConfig: MatDialogConfig = {
-      data: {
-        page: 'players',
-        title: 'Players Help',
-      },
       disableClose: false,
       maxWidth: '80vw',
     };
-    this.dialog.open(HelpComponent, dialogConfig);
+    this.dialog.open(PlayersHelpComponent, dialogConfig);
   }
 }

@@ -1,4 +1,3 @@
-import { Component, inject, model, signal, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { Auth } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +8,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '@services/user.service';
 import * as firebase from 'firebase/auth';
 import { environment } from 'src/environments/environment';
+import {
+  Component,
+  inject,
+  model,
+  OnInit,
+  signal,
+  Signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -31,7 +38,7 @@ import {
     MatButtonModule,
   ],
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   fb = inject(FormBuilder);
   auth = inject(Auth);
   userService = inject(UserService);
@@ -45,6 +52,7 @@ export class ProfileComponent {
 
   hidePassword = model<boolean>(true);
   hideConfirm = model<boolean>(true);
+  googleOnlyUser = model<boolean>(false);
 
   emailForm = this.fb.group({
     email: [this.#user()?.email, Validators.email],
@@ -56,6 +64,15 @@ export class ProfileComponent {
     },
     { validators: this.passwordMatchValidator }
   );
+
+  ngOnInit(): void {
+    if (
+      this.auth.currentUser.providerData.length === 1 &&
+      this.auth.currentUser.providerData[0].providerId === 'google.com'
+    ) {
+      this.googleOnlyUser.set(true);
+    }
+  }
 
   get e() {
     return this.emailForm.controls;

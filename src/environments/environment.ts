@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  useEmulators: false,
-  buildDate: new Date('2024-09-22T04:30:00.453Z')
+  useEmulators: true,
+  buildDate: new Date('2024-09-22T18:33:30.951Z')
 };

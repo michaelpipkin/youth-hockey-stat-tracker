@@ -317,3 +317,30 @@ mat-icon.small-icon-button {
 .cell-left {
   text-align: left !important;
 }
+
+.help-dialog-header {
+  display: grid;
+  grid-template-columns: auto max-content;
+  align-items: center;
+  padding-top: 12px;
+  padding-right: 12px;
+  h4 {
+    display: grid;
+    justify-items: start;
+    align-items: center;
+    margin-left: 24px;
+  }
+  mat-icon {
+    display: grid;
+    justify-items: end;
+    align-items: center;
+  }
+}
+
+.help-dialog-content {
+  padding-top: 0;
+  p {
+    line-height: 1.3em;
+    font-size: 1.2em;
+  }
+}

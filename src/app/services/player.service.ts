@@ -567,45 +567,45 @@ export class PlayerService {
       collection(this.fs, 'players'),
       where('programRef', '==', programRef)
     );
-    let playersSnapshot;
-    try {
-      playersSnapshot = await getDocs(playerQuery);
-    } catch (error) {
-      console.error('Error fetching player documents:', error);
-      throw new Error('Failed to fetch player documents');
-    }
+    const playersSnapshot = await getDocs(playerQuery);
 
     // Update players to remove program and team references
     playersSnapshot.docs.forEach((doc) => {
-      batch.update(doc.ref, { programRef: null, teamRef: null });
+      batch.update(doc.ref, {
+        programRef: null,
+        teamRef: null,
+        tryoutNumber: '',
+        jerseyNumber: '',
+        evaluationScore: 0,
+        totalLooks: 0,
+      });
     });
 
     // Get all teams in the program
     const teamsCollection = collection(this.fs, `programs/${programId}/teams`);
     const teamsSnapshot = await getDocs(teamsCollection);
 
-    // Remove references to guardians in coach fields
+    // Reset all coach fields
     teamsSnapshot.docs.forEach((teamDoc) => {
-      const teamData = teamDoc.data();
-      const teamDocRef = doc(this.fs, `teams/${teamDoc.id}`);
-      let updateRequired = false;
-      const updates: any = {};
-
-      [
-        'headCoachRef',
-        'assistantCoach1Ref',
-        'assistantCoach2Ref',
-        'managerRef',
-      ].forEach((coachField) => {
-        if (teamData[coachField]?.id) {
-          updates[coachField] = {};
-          updateRequired = true;
-        }
+      batch.update(teamDoc.ref, {
+        headCoach: null,
+        assistantCoach1: null,
+        assistantCoach2: null,
+        manager: null,
+        otherCoaches: '',
       });
+    });
 
-      if (updateRequired) {
-        batch.update(teamDocRef, updates);
-      }
+    // Get all evaluations in the program
+    const evaluationsCollection = collection(
+      this.fs,
+      `programs/${programId}/evaluations`
+    );
+    const evaluationsSnapshot = await getDocs(evaluationsCollection);
+
+    // Delete all evaluations
+    evaluationsSnapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
     });
 
     // Commit the batch
@@ -800,6 +800,7 @@ export class PlayerService {
         assistantCoach1: null,
         assistantCoach2: null,
         manager: null,
+        otherCoaches: '',
       });
     }
 

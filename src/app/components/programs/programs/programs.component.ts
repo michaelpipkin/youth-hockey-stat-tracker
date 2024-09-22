@@ -8,13 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HelpComponent } from '@components/help/help.component';
 import { Program } from '@models/program';
 import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
 import { LoadingService } from '@shared/loading/loading.service';
 import { AddProgramComponent } from '../add-program/add-program.component';
 import { EditProgramComponent } from '../edit-program/edit-program.component';
+import { ProgramsHelpComponent } from '../programs-help/programs-help.component';
 import {
   Component,
   effect,
@@ -108,13 +108,9 @@ export class ProgramsComponent {
 
   showHelp(): void {
     const dialogConfig: MatDialogConfig = {
-      data: {
-        page: 'programs',
-        title: 'Programs Help',
-      },
       disableClose: false,
       maxWidth: '80vw',
     };
-    this.dialog.open(HelpComponent, dialogConfig);
+    this.dialog.open(ProgramsHelpComponent, dialogConfig);
   }
 }

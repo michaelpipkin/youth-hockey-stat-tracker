@@ -51,7 +51,6 @@ export class LoginComponent {
   step2Complete = signal<boolean>(false);
   hidePassword = model<boolean>(true);
   newAccount = model<boolean>(false);
-  passwordField = viewChild<ElementRef>('passwordInput');
 
   emailForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -80,7 +79,11 @@ export class LoginComponent {
   async checkEmail() {
     const email = this.emailForm.value.email;
     const signInMethods = await fetchSignInMethodsForEmail(this.auth, email);
-    if (signInMethods.length === 0) {
+    if (signInMethods.length === 1 && signInMethods[0] === 'google.com') {
+      this.snackbar.open('Please sign in with Google', 'Close');
+      return;
+    }
+    if (!signInMethods.includes('password')) {
       // New user
       this.newAccount.set(true);
     }

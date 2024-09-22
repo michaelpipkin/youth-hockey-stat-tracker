@@ -30,14 +30,19 @@
         <mat-error>Invalid email address.</mat-error>
         }
       </mat-form-field>
-      <button
-        mat-flat-button
-        [disabled]="emailForm.invalid || emailForm.pristine"
-        [class.hidden]="step2Complete()"
-        (click)="checkEmail()"
-      >
-        Next
-      </button>
+      <div class="buttons">
+        <button mat-stroked-button type="button" (click)="resetForm()">
+          Back
+        </button>
+        <button
+          mat-flat-button
+          [disabled]="emailForm.invalid || emailForm.pristine"
+          [class.hidden]="step2Complete()"
+          (click)="checkEmail()"
+        >
+          Next
+        </button>
+      </div>
     </form>
     <form
       [formGroup]="passwordForm"
@@ -52,10 +57,12 @@
         <mat-label>Password</mat-label>
         }
         <input
-          #passwordInput
           matInput
           [type]="hidePassword() ? 'password' : 'text'"
           formControlName="password"
+          (keydown.enter)="
+            $event.preventDefault(); passwordForm.valid && emailPasswordLogin()
+          "
         />
         <button
           mat-icon-button
@@ -72,7 +79,7 @@
         @if (p.password?.errors?.required) {
         <mat-error>Password is required.</mat-error>
         } @if (p.password?.errors?.minlength) {
-        <mat-error>Password must be at least 6 characters.</mat-error>
+        <mat-error>Password must be at least 6 chars.</mat-error>
         }
       </mat-form-field>
       <div class="buttons">

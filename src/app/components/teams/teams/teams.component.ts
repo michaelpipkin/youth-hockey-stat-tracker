@@ -8,7 +8,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HelpComponent } from '@components/help/help.component';
 import { EditPlayerComponent } from '@components/players/edit-player/edit-player.component';
 import { Player } from '@models/player';
 import { Program } from '@models/program';
@@ -23,6 +22,7 @@ import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddTeamComponent } from '../add-team/add-team.component';
 import { EditTeamComponent } from '../edit-team/edit-team.component';
 import { GenerateTeamsComponent } from '../generate-teams/generate-teams.component';
+import { TeamsHelpComponent } from '../teams-help/teams-help.component';
 import { TransferPlayerComponent } from '../transfer-player/transfer-player.component';
 
 @Component({
@@ -150,13 +150,9 @@ export class TeamsComponent {
 
   showHelp(): void {
     const dialogConfig: MatDialogConfig = {
-      data: {
-        page: 'teams',
-        title: 'Teams Help',
-      },
       disableClose: false,
       maxWidth: '80vw',
     };
-    this.dialog.open(HelpComponent, dialogConfig);
+    this.dialog.open(TeamsHelpComponent, dialogConfig);
   }
 }
