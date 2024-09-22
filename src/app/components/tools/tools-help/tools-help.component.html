@@ -1,0 +1,35 @@
+<div class="help-dialog-header">
+  <h4>Tools Help</h4>
+  <mat-icon fontSet="material-symbols-outlined" mat-dialog-close
+    >close</mat-icon
+  >
+</div>
+<mat-dialog-content class="help-dialog-content">
+  <p>
+    This page allows you to perform certain maintenance tasks for the selected
+    program.
+  </p>
+  <p>
+    Once evaluations have been entered, you can process them to calculate player
+    evaluation scores. Each time you process evaluations, the score and looks
+    for each player will be updated and replaced.
+  </p>
+  <p>
+    Once evaluations have been processed, you can auto-assign players to teams.
+    This will assign players to teams based on their evaluation scores. Players
+    are assigned in descending order of their evaluation score, from the first
+    team to the last team. In the next pass, the team order is reversed. This
+    continues until all players have been assigned to a team. Each time you
+    auto-assign players to teams, the team rosters will be cleared first.
+  </p>
+  <p>
+    You can also remove all players from teams. This will remove all players
+    from all teams, but will not delete the teams themselves. This will also
+    remove all coach assignments.
+  </p>
+  <p>
+    Finally, you can reset the program. This will remove all players, teams,
+    evaluations, and coach assignments. This will not delete the program itself.
+    Please note that this operation cannot be undone.
+  </p>
+</mat-dialog-content>

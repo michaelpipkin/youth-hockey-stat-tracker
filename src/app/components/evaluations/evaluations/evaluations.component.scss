@@ -1,0 +1,68 @@
+.buttons {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: max-content max-content;
+  margin-bottom: 8px;
+}
+
+.evaluations {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.evaluation {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 8px;
+  background-color: black;
+  border: 2px solid black;
+  min-width: 420px;
+}
+
+.category {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background-color: black;
+  align-items: start;
+  height: fit-content;
+}
+
+.heading {
+  display: grid;
+  padding-left: 8px;
+  padding-right: 8px;
+  justify-content: center;
+  font-weight: bold;
+  grid-column: 1 / span 3;
+  background-color: lightgray;
+  border-bottom: 2px solid black;
+  height: fit-content;
+}
+
+.scores {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 1px;
+  background-color: black;
+  align-items: start;
+  height: fit-content;
+}
+
+.scores span {
+  display: grid;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: white;
+}
+
+.score {
+  height: 22px;
+  border-bottom: 2px solid black;
+  background-color: lightgray !important;
+}

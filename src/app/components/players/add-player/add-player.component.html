@@ -1,0 +1,223 @@
+<h1 mat-dialog-title>Create New Player</h1>
+<form [formGroup]="playerForm">
+  <mat-dialog-content class="content">
+    <div class="section-1">
+      <mat-form-field appearance="fill" class="name">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" />
+        @if (f.firstName.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="name">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" />
+        @if (f.lastName.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="gender-select">
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender">
+          @for (gender of genderOptions; track gender) {
+          <mat-option [value]="gender">{{ gender }}</mat-option>
+          }
+        </mat-select>
+        @if (f.gender.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="datepicker">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="birthDate" />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        @if (f.birthDate.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="section-2">
+      <mat-form-field appearance="fill" class="address">
+        <mat-label>Address Line 1</mat-label>
+        <input matInput formControlName="street1" />
+        @if (f.street1.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="address">
+        <mat-label>Address Line 2</mat-label>
+        <input matInput formControlName="street2" />
+      </mat-form-field>
+    </div>
+    <div class="section-3">
+      <mat-form-field appearance="fill">
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city" />
+        @if (f.city.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="state">
+        <mat-label>State</mat-label>
+        <input matInput formControlName="state" maxlength="2" />
+        @if (f.state.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        } @if (f.state.errors?.['pattern']) {
+        <mat-error>*Invalid</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="zip-code">
+        <mat-label>Zip Code</mat-label>
+        <input matInput formControlName="zipCode" maxlength="5" />
+        @if (f.zipCode.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        } @if (f.zipCode.errors?.['pattern']) {
+        <mat-error>*Invalid</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="section-4">
+      <mat-form-field appearance="fill" class="usa-hockey-number">
+        <mat-label>USA Hockey Number</mat-label>
+        <input matInput formControlName="usaHockeyNumber" />
+        @if (f.usaHockeyNumber.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="goalie-select">
+        <mat-label>Goalie</mat-label>
+        <mat-select formControlName="goalie">
+          @for (goalie of goalieOptions; track goalie) {
+          <mat-option [value]="goalie">{{ goalie }}</mat-option>
+          }
+        </mat-select>
+        @if (f.goalie.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="t-shirt-size">
+        <mat-label>T-Shirt Size</mat-label>
+        <mat-select formControlName="tShirtSize">
+          @for (size of tShirtSizes; track size) {
+          <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+        @if (f.tShirtSize.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Preferred Pronouns</mat-label>
+        <input matInput formControlName="pronouns" />
+      </mat-form-field>
+    </div>
+    <div class="section-5">
+      <mat-form-field appearance="fill" class="important-info">
+        <mat-label>Important Info</mat-label>
+        <input matInput formControlName="importantInfo" />
+      </mat-form-field>
+    </div>
+    <div class="section-6">
+      <mat-form-field appearance="fill" class="jersey-number">
+        <mat-label>Tryout #</mat-label>
+        <input matInput formControlName="tryoutNumber" />
+      </mat-form-field>
+      <mat-checkbox formControlName="addToProgram">
+        Add to {{ program.name }}
+      </mat-checkbox>
+    </div>
+    <div class="guardian-title">
+      <h5>Guardians</h5>
+      <mat-icon
+        fontSet="material-symbols-outlined"
+        (click)="addGuardian()"
+        class="mat-icon-button"
+        matTooltip="Add Guardian"
+        >add_circle</mat-icon
+      >
+    </div>
+    <div formArrayName="guardians">
+      @for (guardianForm of guardiansFormArray.controls; track guardianForm; let
+      i = $index) {
+      <div [formGroupName]="i" class="guardian-form">
+        <mat-form-field appearance="fill" class="name">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" />
+          @if (guardianForm.controls.firstName.errors?.['required']) {
+          <mat-error>*Required</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="name">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" />
+          @if (guardianForm.controls.lastName.errors?.['required']) {
+          <mat-error>*Required</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="phone-number">
+          <mat-label>Phone Number</mat-label>
+          <input matInput formControlName="phone" appFormatPhone />
+          @if (guardianForm.controls.phone.errors?.['required']) {
+          <mat-error>*Required</mat-error>
+          } @if (guardianForm.controls.phone.errors?.['pattern']) {
+          <mat-error>*Invalid</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" />
+          @if (guardianForm.controls.email.errors?.['required']) {
+          <mat-error>*Required</mat-error>
+          } @if (guardianForm.controls.email.errors?.['email']) {
+          <mat-error>*Invalid</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="coach">
+          <mat-label>Coach</mat-label>
+          <mat-select formControlName="coachManager">
+            @for (coach of coachOptions; track coach) {
+            <mat-option [value]="coach">{{ coach }}</mat-option>
+            }
+          </mat-select>
+          @if (guardianForm.controls.coachManager.errors?.['required']) {
+          <mat-error>*Required</mat-error>
+          }
+        </mat-form-field>
+        <mat-icon
+          fontSet="material-symbols-outlined"
+          (click)="removeGuardian(i)"
+          class="mat-icon-button"
+          matTooltip="Remove Guardian"
+          >delete</mat-icon
+        >
+      </div>
+      }
+    </div>
+    @if (f.guardians.errors?.['required']) {
+    <mat-error>*At least one guardian is required</mat-error>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-flat-button
+      type="submit"
+      class="btn-tertiary"
+      [disabled]="playerForm.invalid || playerForm.disabled"
+      (click)="onSubmit()"
+    >
+      Create Player
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="playerForm.disabled"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,28 @@
+<div class="container pt-3 mb-2">
+  <div class="page-header">
+    <div></div>
+    <h3>{{ currentProgram()?.name }}</h3>
+    <div class="help-icon">
+      <mat-icon
+        fontSet="material-symbols-outlined"
+        matTooltip="Help"
+        (click)="showHelp()"
+        >help</mat-icon
+      >
+    </div>
+  </div>
+  <div class="buttons">
+    <button mat-flat-button (click)="processEvaluations()">
+      Process Evaluations
+    </button>
+    <button mat-flat-button (click)="assignPlayersToTeams()">
+      Auto-assign Players to Teams
+    </button>
+    <button mat-flat-button (click)="clearAllTeams()">
+      Remove All Players from Teams
+    </button>
+    <button mat-flat-button class="btn-danger" (click)="resetProgram()">
+      Reset Program
+    </button>
+  </div>
+</div>

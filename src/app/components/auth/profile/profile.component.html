@@ -1,0 +1,95 @@
+<div class="container" [class.hidden]="googleOnlyUser()">
+  <h4>Update Email Address</h4>
+  <form [formGroup]="emailForm" class="container">
+    <mat-form-field id="email" subscriptSizing="dynamic">
+      <mat-label>Email Address</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (e.email.errors?.['email']) {
+      <mat-error> Invalid email address </mat-error>
+      }
+    </mat-form-field>
+    <div class="buttons">
+      <button
+        mat-flat-button
+        type="button"
+        [disabled]="firebaseUser()?.emailVerified"
+        (click)="verifyEmail()"
+      >
+        {{ firebaseUser()?.emailVerified ? "Email Verified" : "Verify Email" }}
+      </button>
+      <button
+        type="submit"
+        class="btn-secondary"
+        mat-flat-button
+        [disabled]="
+          emailForm.invalid ||
+          e.email?.value === firebaseUser()?.email ||
+          e.email.value === ''
+        "
+        (click)="onSubmitEmail()"
+      >
+        Update Email
+      </button>
+    </div>
+  </form>
+  <h4>Change Your Password</h4>
+  <form [formGroup]="passwordForm" class="container">
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>New Password</mat-label>
+      <input
+        matInput
+        [type]="hidePassword() ? 'password' : 'text'"
+        autocomplete="new-password"
+        formControlName="password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="toggleHidePassword()"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hidePassword"
+      >
+        <mat-icon fontSet="material-symbols-outlined">{{
+          hidePassword() ? "visibility_off" : "visibility"
+        }}</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        [type]="hideConfirm() ? 'password' : 'text'"
+        autocomplete="new-password"
+        formControlName="confirmPassword"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="toggleHideConfirm()"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hideConfirm"
+      >
+        <mat-icon fontSet="material-symbols-outlined">{{
+          hideConfirm() ? "visibility_off" : "visibility"
+        }}</mat-icon>
+      </button>
+    </mat-form-field>
+    @if (passwordForm.errors?.['mismatch']) {
+    <mat-error> Passwords do not match. </mat-error>
+    }
+    <button
+      mat-flat-button
+      [disabled]="
+        passwordForm.invalid ||
+        passwordForm.controls.confirmPassword.value === ''
+      "
+      (click)="onSubmitPassword()"
+    >
+      Change Password
+    </button>
+  </form>
+</div>
+<div class="container" [class.hidden]="!googleOnlyUser()">
+  <h4>Google User</h4>
+  <p>Your account is managed by Google.</p>
+</div>

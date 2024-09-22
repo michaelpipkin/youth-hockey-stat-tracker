@@ -1,0 +1,105 @@
+<div class="container pt-3 mb-2">
+  <div class="page-header">
+    <div></div>
+    <h3>{{ currentProgram()?.name }}</h3>
+    <div class="help-icon">
+      <mat-icon
+        fontSet="material-symbols-outlined"
+        matTooltip="Help"
+        (click)="showHelp()"
+        >help</mat-icon
+      >
+    </div>
+  </div>
+  <div class="buttons mb-3">
+    <button mat-flat-button (click)="generateTeams()">
+      Generate New Teams
+    </button>
+    <button mat-flat-button (click)="addTeam()">Add New Team</button>
+  </div>
+  <div class="team-cards">
+    @for (team of teams(); track team.id) {
+    <mat-card appearance="outlined">
+      <mat-card-header class="team-card-header">
+        <mat-card-title
+          class="clickable"
+          matTooltip="Edit team"
+          (click)="editTeam(team)"
+          >{{ team.name }}</mat-card-title
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <div class="column-headers">
+          <span>Name</span>
+          <span>#</span>
+          <span>Age</span>
+          <span></span>
+          <span>Eval</span>
+          <span>Options</span>
+        </div>
+        <hr class="card-hr" />
+        @for (player of getTeamPlayers(team.id); track player.id) {
+        <div
+          class="player-details"
+          [class.highlight-head-coach]="player.parentCoach === 'Head Coach'"
+          [class.highlight-asst-coach]="
+            player.parentCoach === 'Assistant Coach'
+          "
+          [class.highlight-manager]="player.parentCoach === 'Manager'"
+        >
+          <span
+            class="clickable"
+            (click)="editPlayer(player)"
+            matTooltip="Edit player"
+            >{{ player.rosterName }}</span
+          >
+          <span>{{ player.jerseyNumber }}</span>
+          <span>{{ player.age }}</span>
+          <span style="color: red; font-weight: bold">{{
+            player.genderCode !== "M" ? player.genderCode : ""
+          }}</span>
+          <span>{{ player.evaluationScore | number : "1.2-2" }}</span>
+          <div>
+            <mat-icon
+              class="me-1 small-icon-button"
+              fontSet="material-symbols-outlined"
+              matTooltip="Remove player from team"
+              (click)="removePlayer(player)"
+              >person_remove</mat-icon
+            >
+
+            <mat-icon
+              class="small-icon-button"
+              fontSet="material-symbols-outlined"
+              matTooltip="Move player to another team"
+              (click)="transferPlayer(player)"
+              >swap_horiz</mat-icon
+            >
+          </div>
+        </div>
+        }
+        <hr class="card-hr" />
+      </mat-card-content>
+      <mat-card-footer>
+        <div class="team-summary">
+          <span>Player count: {{ team.players.length }}</span>
+          <span
+            >Female/non-binary player count:
+            {{ team.femaleNbPlayerCount }}</span
+          >
+          <span
+            >Average evaluation score:
+            {{ team.averageScore | number : "1.2-2" }}</span
+          >
+          <span>Team has goalie: {{ team.hasGoalie | yesNo }}</span>
+          <span>Head coach: {{ team.headCoach?.fullName }}</span>
+          <span>Assistant coach 1: {{ team.assistantCoach1?.fullName }}</span>
+          <span>Assistant coach 2: {{ team.assistantCoach2?.fullName }}</span>
+          <span>Manager: {{ team.manager?.fullName }}</span>
+          <span>Other coaches: {{ team.otherCoaches }}</span>
+        </div>
+      </mat-card-footer>
+    </mat-card>
+    }
+  </div>
+</div>

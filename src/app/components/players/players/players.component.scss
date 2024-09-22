@@ -1,0 +1,29 @@
+.filters-1 {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: max-content max-content;
+  margin-bottom: 8px;
+}
+
+.filters-2 {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
+  margin-bottom: 8px;
+}
+
+.filters-3 {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: max-content max-content max-content;
+  margin-bottom: 8px;
+}

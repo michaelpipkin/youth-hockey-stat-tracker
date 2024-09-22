@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>Add New Team</h1>
+<form [formGroup]="teamForm">
+  <mat-dialog-content class="content">
+    <div class="section-1">
+      <mat-form-field appearance="fill">
+        <mat-label>Team Name</mat-label>
+        <input matInput formControlName="name" />
+        @if (f.name.errors?.['required']) {
+        <mat-error>*Required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description" />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-flat-button
+      type="submit"
+      class="btn-tertiary"
+      [disabled]="teamForm.invalid || teamForm.disabled"
+      (click)="onSubmit()"
+    >
+      Add Team
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="teamForm.disabled"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</form>

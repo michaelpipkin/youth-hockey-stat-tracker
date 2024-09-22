@@ -1,0 +1,138 @@
+<div class="container pt-3 mb-2">
+  <div class="page-header">
+    <div></div>
+    <h3>{{ currentProgram()?.name }}</h3>
+    <div class="help-icon">
+      <mat-icon
+        fontSet="material-symbols-outlined"
+        matTooltip="Help"
+        (click)="showHelp()"
+        >help</mat-icon
+      >
+    </div>
+  </div>
+  <div class="buttons mb-3">
+    <button mat-flat-button (click)="downloadForm()">
+      Download/Print Evaluation Form
+    </button>
+    <button mat-flat-button (click)="addEvaluation()">Add Evaluation</button>
+  </div>
+  <div class="evaluations">
+    @for (evaluation of evaluations(); track evaluation.id) {
+    <mat-expansion-panel style="min-width: fit-content; height: fit-content">
+      <mat-expansion-panel-header>
+        <mat-panel-title
+          >{{ evaluation.evaluatorName }} -
+          {{ evaluation.evaluationDate.toDate() | date : "M/d/yyyy" }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="evaluation">
+        <div class="category">
+          <div class="heading">Skating</div>
+          <div class="scores">
+            <span class="score"><strong>1</strong></span>
+            @for (score of getScores(evaluation, 'Skating', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>2</strong></span>
+            @for (score of getScores(evaluation, 'Skating', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>3</strong></span>
+            @for (score of getScores(evaluation, 'Skating', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+        </div>
+        <div class="category">
+          <div class="heading">Puck Control</div>
+          <div class="scores">
+            <span class="score"><strong>1</strong></span>
+            @for (score of getScores(evaluation, 'Puck Control', 1); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>2</strong></span>
+            @for (score of getScores(evaluation, 'Puck Control', 2); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>3</strong></span>
+            @for (score of getScores(evaluation, 'Puck Control', 3); track
+            score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+        </div>
+        <div class="category">
+          <div class="heading">Shooting</div>
+          <div class="scores">
+            <span class="score"><strong>1</strong></span>
+            @for (score of getScores(evaluation, 'Shooting', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>2</strong></span>
+            @for (score of getScores(evaluation, 'Shooting', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>3</strong></span>
+            @for (score of getScores(evaluation, 'Shooting', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+        </div>
+        <div class="category">
+          <div class="heading">Game Play</div>
+          <div class="scores">
+            <span class="score"><strong>1</strong></span>
+            @for (score of getScores(evaluation, 'Game Play', 1); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>2</strong></span>
+            @for (score of getScores(evaluation, 'Game Play', 2); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+          <div class="scores">
+            <span class="score"><strong>3</strong></span>
+            @for (score of getScores(evaluation, 'Game Play', 3); track score) {
+            <span>{{ score.tryoutNumber }}</span>
+            }
+          </div>
+        </div>
+      </div>
+      <mat-action-row>
+        <button
+          type="button"
+          mat-flat-button
+          (click)="editEvaluation(evaluation)"
+        >
+          Edit Evaluation
+        </button>
+        <button
+          mat-flat-button
+          type="button"
+          (click)="deleteEvaluation(evaluation)"
+          class="btn-danger"
+        >
+          Delete Evaluation
+        </button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    }
+  </div>
+</div>

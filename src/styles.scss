@@ -1,1 +1,346 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+@use "./app/styles/m3-theme.scss" as theme;
+// Plus imports for other components in your app.
+@import "firebaseui/dist/firebaseui.css";
+$enable-negative-margins: true;
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+html {
+  @include mat.all-component-themes(theme.$light-theme);
+}
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+* {
+  font-size: 0.9rem;
+}
+
+.mat-toolbar,
+.mat-mdc-menu-panel {
+  background: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
+  color: white !important;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+mat-error,
+mat-hint {
+  font-size: 0.8rem;
+}
+
+mat-slide-toggle {
+  padding-bottom: 8px;
+}
+
+.footer {
+  position: fixed;
+  width: 100%;
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    primary,
+    50
+  ) !important;
+  bottom: 0px;
+  left: 0px;
+  z-index: 20;
+  color: white;
+  margin: 0;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: max-content auto;
+  a {
+    color: white;
+    text-decoration: none;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.btn-secondary:not([disabled]) {
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    secondary,
+    70
+  ) !important;
+  color: mat.get-theme-color(theme.$light-theme, secondary, 30) !important;
+}
+
+.btn-tertiary:not([disabled]) {
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    tertiary,
+    50
+  ) !important;
+}
+
+.btn-danger:not([disabled]) {
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    error,
+    50
+  ) !important;
+}
+
+.mat-mdc-header-row,
+.mat-mdc-footer-row {
+  background-color: #dcdcdc !important;
+  font-weight: bold !important;
+}
+
+.auth-container {
+  width: 400px;
+}
+
+.firebaseui-idp-password {
+  background-color: mat.get-theme-color(
+    theme.$light-theme,
+    primary,
+    50
+  ) !important;
+}
+
+.scrollable-table {
+  overflow-y: auto;
+  max-height: 800px;
+  border: 12px solid white;
+  margin-bottom: 24px;
+}
+
+.mat-error {
+  font-size: 0.7rem;
+  color: red;
+  margin-top: -20px;
+}
+
+mat-dialog-title,
+.mat-mdc-dialog-title {
+  padding-bottom: 0 !important;
+}
+
+mat-dialog-content {
+  display: grid !important;
+}
+
+mat-dialog-actions {
+  display: grid !important;
+  grid-auto-flow: column;
+  justify-items: end;
+  column-gap: 4px;
+  button {
+    margin-left: 0 !important;
+  }
+}
+
+.container {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.page-header {
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  align-items: center;
+  margin-bottom: 8px;
+  h3 {
+    margin: 0;
+  }
+}
+
+.table-container {
+  display: grid;
+  justify-content: center;
+}
+
+.dense-table {
+  th,
+  td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+.help-icon {
+  margin-left: 16px;
+  height: 30px;
+  width: 30px;
+  mat-icon {
+    color: mat.get-theme-color(theme.$light-theme, primary, 40) !important;
+    font-size: 30px;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+
+    &:hover {
+      color: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
+    }
+  }
+}
+
+mat-icon.mat-icon-button {
+  color: mat.get-theme-color(theme.$light-theme, primary, 40) !important;
+  font-size: 30px;
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+
+  &:hover {
+    color: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
+  }
+}
+
+mat-icon.small-icon-button {
+  color: mat.get-theme-color(theme.$light-theme, primary, 40) !important;
+  font-size: 22px;
+  height: 22px;
+  width: 22px;
+  cursor: pointer;
+
+  &:hover {
+    color: mat.get-theme-color(theme.$light-theme, primary, 50) !important;
+  }
+}
+
+.mat-form-field {
+  display: block;
+}
+
+.form-buttons-right button {
+  margin-left: 8px;
+  margin-bottom: 8px;
+}
+
+.form-buttons-right a {
+  margin-bottom: 8px;
+}
+
+.form-buttons-left button {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.form-buttons-left a {
+  margin-bottom: 8px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.datepicker {
+  max-width: 152px;
+}
+
+.datepicker .mat-mdc-form-field-infix {
+  max-width: 90px;
+}
+
+.gender-select {
+  width: 140px;
+}
+
+.address {
+  width: 300px;
+}
+
+.state {
+  width: 74px;
+}
+
+.zip-code {
+  width: 92px;
+}
+
+.phone-number {
+  width: 140px;
+}
+
+.name {
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.coach {
+  width: 162px;
+}
+
+.goalie-select {
+  width: 140px;
+}
+
+.jersey-number {
+  width: 90px;
+}
+
+.cell-center {
+  text-align: center !important;
+}
+
+.cell-right {
+  text-align: right !important;
+}
+
+.cell-left {
+  text-align: left !important;
+}
+
+.help-dialog-header {
+  display: grid;
+  grid-template-columns: auto max-content;
+  align-items: center;
+  padding-top: 12px;
+  padding-right: 12px;
+  h4 {
+    display: grid;
+    justify-items: start;
+    align-items: center;
+    margin-left: 24px;
+  }
+  mat-icon {
+    display: grid;
+    justify-items: end;
+    align-items: center;
+  }
+}
+
+.help-dialog-content {
+  padding-top: 0;
+  p {
+    line-height: 1.3em;
+    font-size: 1.2em;
+  }
+}

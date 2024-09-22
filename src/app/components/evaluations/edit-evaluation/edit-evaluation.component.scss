@@ -1,0 +1,53 @@
+.section-1 {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-columns: max-content max-content;
+  margin-bottom: 8px;
+}
+
+.evaluation {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.category {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: max-content max-content;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+}
+
+.heading {
+  display: grid;
+  grid-column: 1 / span 3;
+  font-weight: bold;
+  justify-content: center;
+}
+
+.score {
+  display: grid;
+  justify-content: center;
+}
+
+.scores {
+  display: grid;
+  column-gap: 0;
+  margin-left: -1px;
+  margin-right: -1px;
+}
+
+.score-entry {
+  resize: none;
+  overflow-y: hidden;
+  padding-left: 4px;
+}
+
+.error {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}

@@ -1,0 +1,59 @@
+.buttons {
+  display: grid;
+  gap: 8px;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: auto;
+  grid-template-columns: max-content max-content;
+  margin-bottom: 8px;
+}
+
+.team-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.team-card-header {
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.column-headers {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 20px 15px 10px 30px 55px;
+  column-gap: 12px;
+  line-height: 1.4rem;
+}
+
+.player-details {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 20px 15px 10px 30px 55px;
+  column-gap: 12px;
+  line-height: 1.4rem;
+}
+
+.highlight-head-coach {
+  background-color: #75e775;
+}
+
+.highlight-asst-coach {
+  background-color: #a6d2dd;
+}
+
+.highlight-manager {
+  background-color: #f7d7a8;
+}
+
+.card-hr {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.team-summary {
+  padding: 8px 16px 16px 16px;
+  line-height: 1.4rem;
+  display: grid;
+}

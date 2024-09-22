@@ -1,0 +1,28 @@
+.auth-container {
+  margin-top: 40px;
+}
+
+.login {
+  display: grid;
+  justify-items: center;
+  margin-top: 40px;
+  h2 {
+    margin-bottom: 20px;
+  }
+  button {
+    justify-self: stretch;
+  }
+  form {
+    justify-items: stretch;
+  }
+}
+
+.login-button {
+  font-size: 1rem !important;
+}
+
+.buttons {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}

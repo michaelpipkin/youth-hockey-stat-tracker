@@ -1,0 +1,82 @@
+<h1 mat-dialog-title>Edit Team Details</h1>
+<form [formGroup]="teamForm">
+  <mat-dialog-content class="content">
+    <mat-form-field appearance="fill">
+      <mat-label>Team Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="f.name.errors?.['required']">*Required</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Head Coach</mat-label>
+      <mat-select formControlName="headCoachId">
+        <mat-option value="0">Unassigned</mat-option>
+        @for (coach of coaches(); track coach.id) {
+        <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Assistant Coach 1</mat-label>
+      <mat-select formControlName="assistantCoach1Id">
+        <mat-option value="0">Unassigned</mat-option>
+        @for (coach of coaches(); track coach.id) {
+        <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Assistant Coach 2</mat-label>
+      <mat-select formControlName="assistantCoach2Id">
+        <mat-option value="0">Unassigned</mat-option>
+        @for (coach of coaches(); track coach.id) {
+        <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Manager</mat-label>
+      <mat-select formControlName="managerId">
+        <mat-option value="0">Unassigned</mat-option>
+        @for (coach of coaches(); track coach.id) {
+        <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Other Coaches</mat-label>
+      <input matInput formControlName="otherCoaches" />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-flat-button
+      type="submit"
+      class="btn-tertiary"
+      [disabled]="teamForm.invalid || teamForm.pristine || teamForm.disabled"
+      (click)="onSubmit()"
+    >
+      Save Changes
+    </button>
+    <button
+      mat-flat-button
+      type="button"
+      [disabled]="teamForm.disabled"
+      (click)="deleteTeam()"
+      class="btn-danger"
+    >
+      Delete Team
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="teamForm.disabled"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</form>
