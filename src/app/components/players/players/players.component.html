@@ -15,6 +15,17 @@
     <mat-form-field appearance="fill" subscriptSizing="dynamic">
       <mat-label>Search by name</mat-label>
       <input matInput [(ngModel)]="nameFilter" />
+      @if (nameFilter() !== '') {
+      <button
+        matSuffix
+        tabindex="-1"
+        mat-icon-button
+        aria-label="Clear"
+        (click)="nameFilter.set('')"
+      >
+        <mat-icon fontSet="material-symbols-outlined">close</mat-icon>
+      </button>
+      }
     </mat-form-field>
     <mat-form-field appearance="fill" subscriptSizing="dynamic">
       <mat-label>Select team</mat-label>
