@@ -58,7 +58,7 @@ export class LoginComponent {
   });
 
   passwordForm = this.fb.group({
-    password: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   toggleHidePassword() {
