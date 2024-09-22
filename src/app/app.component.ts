@@ -1,7 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, inject, OnInit, signal, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -40,7 +39,6 @@ export class AppComponent implements OnInit {
 
   isSmallScreen = signal<boolean>(false);
 
-  user: Signal<User> = this.userService.user;
   isLoggedIn: Signal<boolean> = this.userService.isLoggedIn;
   activeProgram: Signal<Program> = this.programService.activeUserProgram;
 

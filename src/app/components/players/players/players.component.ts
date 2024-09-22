@@ -21,7 +21,6 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { SortingService } from '@services/sorting.service';
 import { TeamService } from '@services/team.service';
-import { UserService } from '@services/user.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { ClearSelectDirective } from '@shared/directives/clear-select.directive';
 import { LoadingService } from '@shared/loading/loading.service';
@@ -64,7 +63,6 @@ import {
   styleUrl: './players.component.scss',
 })
 export class PlayersComponent {
-  userService = inject(UserService);
   programService = inject(ProgramService);
   playerService = inject(PlayerService);
   teamService = inject(TeamService);
@@ -74,7 +72,6 @@ export class PlayersComponent {
   sorter = inject(SortingService);
   analytics = inject(Analytics);
 
-  #user: Signal<User> = this.userService.user;
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
   programs: Signal<Program[]> = this.programService.userPrograms;
@@ -173,7 +170,6 @@ export class PlayersComponent {
   addNewPlayer(): void {
     const dialogConfig: MatDialogConfig = {
       data: {
-        user: this.#user(),
         program: this.currentProgram(),
         nextTryoutNumber: this.nextTryoutNumber(),
       },

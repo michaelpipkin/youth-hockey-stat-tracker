@@ -9,7 +9,6 @@ import { Program } from '@models/program';
 import { EvaluationService } from '@services/evaluation.service';
 import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
-import { UserService } from '@services/user.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { LoadingService } from '@shared/loading/loading.service';
 import { ToolsHelpComponent } from '../tools-help/tools-help.component';
@@ -23,7 +22,6 @@ import { ToolsHelpComponent } from '../tools-help/tools-help.component';
 })
 export class ToolsComponent {
   programService = inject(ProgramService);
-  userService = inject(UserService);
   evaluationService = inject(EvaluationService);
   playerService = inject(PlayerService);
   loading = inject(LoadingService);
