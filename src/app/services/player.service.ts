@@ -327,13 +327,15 @@ export class PlayerService {
         if (existingGuardiansMap.has(guardian.id)) {
           // Update existing guardian
           const guardianDocRef = doc(guardiansCollection, guardian.id);
-          batch.update(guardianDocRef, guardian);
+          const { id, ...guardianData } = guardian;
+          batch.update(guardianDocRef, guardianData);
           existingGuardiansMap.delete(guardian.id);
         }
       } else {
         // Add new guardian
         const newGuardianDocRef = doc(guardiansCollection);
-        batch.set(newGuardianDocRef, guardian);
+        const { id, ...guardianData } = guardian;
+        batch.set(newGuardianDocRef, guardianData);
       }
     });
 

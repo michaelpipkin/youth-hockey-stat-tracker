@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { Analytics } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -15,7 +14,6 @@ import { Team } from '@models/team';
 import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { TeamService } from '@services/team.service';
-import { UserService } from '@services/user.service';
 import { LoadingService } from '@shared/loading/loading.service';
 import { CoachRolePipe } from '@shared/pipes/coach-role.pipe';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
@@ -41,7 +39,6 @@ import { TransferPlayerComponent } from '../transfer-player/transfer-player.comp
   styleUrl: './teams.component.scss',
 })
 export class TeamsComponent {
-  userService = inject(UserService);
   programService = inject(ProgramService);
   playerService = inject(PlayerService);
   teamService = inject(TeamService);
@@ -50,7 +47,6 @@ export class TeamsComponent {
   dialog = inject(MatDialog);
   analytics = inject(Analytics);
 
-  #user: Signal<User> = this.userService.user;
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
@@ -62,7 +58,6 @@ export class TeamsComponent {
   addTeam(): void {
     const dialogConfig: MatDialogConfig = {
       data: {
-        user: this.#user(),
         program: this.currentProgram(),
       },
     };
@@ -97,7 +92,6 @@ export class TeamsComponent {
       });
     const dialogConfig: MatDialogConfig = {
       data: {
-        user: this.#user(),
         program: this.currentProgram(),
         team,
       },

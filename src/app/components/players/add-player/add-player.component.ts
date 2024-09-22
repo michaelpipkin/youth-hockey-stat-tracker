@@ -63,7 +63,6 @@ export class AddPlayerComponent {
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
   data = inject(MAT_DIALOG_DATA);
-  user: User = this.data.user;
   program: Program = this.data.program;
 
   genderOptions = Object.values(Gender);

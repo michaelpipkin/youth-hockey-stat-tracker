@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { DocumentReference } from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -58,7 +57,6 @@ export class EditTeamComponent {
   analytics = inject(Analytics);
   dialog = inject(MatDialog);
   data = inject(MAT_DIALOG_DATA);
-  user: User = this.data.user;
   program: Program = this.data.program;
   team: Team = this.data.team;
 

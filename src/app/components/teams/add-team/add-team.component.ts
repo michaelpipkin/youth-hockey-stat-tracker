@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -43,7 +42,6 @@ export class AddTeamComponent {
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
   data = inject(MAT_DIALOG_DATA);
-  user: User = this.data.user;
   program: Program = this.data.program;
 
   teamForm = this.fb.group({
