@@ -83,13 +83,11 @@ export class EditProgramComponent {
     this.editProgramForm.disable();
     const formValues = this.editProgramForm.value;
     const updatedProgram: Partial<Program> = {
-      id: this.selectedProgram().id,
-      ownerId: this.user.uid,
       name: formValues.name,
       description: formValues.description,
     };
     this.programService
-      .updateProgram(updatedProgram)
+      .updateProgram(this.selectedProgram().id, updatedProgram)
       .then(() => {
         this.dialogRef.close({ success: true, operation: 'updated' });
       })

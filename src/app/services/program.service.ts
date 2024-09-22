@@ -1,7 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Guardian } from '@models/guardian';
 import { Program } from '@models/program';
-import { Coach } from '@shared/enums';
 import { EvaluationService } from './evaluation.service';
 import { PlayerService } from './player.service';
 import { TeamService } from './team.service';
@@ -71,19 +69,22 @@ export class ProgramService {
     });
   }
 
-  async updateProgram(program: Partial<Program>): Promise<any> {
+  async updateProgram(
+    programId: string,
+    program: Partial<Program>
+  ): Promise<any> {
     const c = collection(this.fs, 'programs');
     const q = query(
       c,
       where('name', '==', program.name),
       where('ownerId', '==', program.ownerId),
-      where(documentId(), '!=', program.id)
+      where(documentId(), '!=', programId)
     );
     return await getDocs(q).then(async (snapshot) => {
       if (!snapshot.empty) {
         throw new Error('A program with this name already exists.');
       }
-      return await updateDoc(doc(this.fs, `programs/${program.id}`), program);
+      return await updateDoc(doc(this.fs, `programs/${programId}`), program);
     });
   }
 

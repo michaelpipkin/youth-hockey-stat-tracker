@@ -12,6 +12,7 @@ import { HelpComponent } from '@components/help/help.component';
 import { Program } from '@models/program';
 import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
+import { LoadingService } from '@shared/loading/loading.service';
 import { AddProgramComponent } from '../add-program/add-program.component';
 import { EditProgramComponent } from '../edit-program/edit-program.component';
 import {
@@ -41,6 +42,7 @@ import {
 export class ProgramsComponent {
   userService = inject(UserService);
   programService = inject(ProgramService);
+  loading = inject(LoadingService);
   dialog = inject(MatDialog);
   snackBar = inject(MatSnackBar);
 
@@ -71,8 +73,13 @@ export class ProgramsComponent {
     );
   }
 
-  onSelectProgram(e: MatSelectChange): void {
-    this.programService.setActiveProgram(this.#user().uid, e.value);
+  async onSelectProgram(e: MatSelectChange): Promise<void> {
+    this.loading.loadingOn();
+    await this.programService
+      .setActiveProgram(this.#user().uid, e.value)
+      .then(() => {
+        this.loading.loadingOff();
+      });
   }
 
   addProgram(): void {

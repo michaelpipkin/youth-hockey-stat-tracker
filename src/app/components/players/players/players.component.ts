@@ -25,6 +25,7 @@ import { TeamService } from '@services/team.service';
 import { UserService } from '@services/user.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { ClearSelectDirective } from '@shared/directives/clear-select.directive';
+import { LoadingService } from '@shared/loading/loading.service';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddPlayerComponent } from '../add-player/add-player.component';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
@@ -67,6 +68,7 @@ export class PlayersComponent {
   programService = inject(ProgramService);
   playerService = inject(PlayerService);
   teamService = inject(TeamService);
+  loading = inject(LoadingService);
   snackBar = inject(MatSnackBar);
   dialog = inject(MatDialog);
   sorter = inject(SortingService);
@@ -155,9 +157,15 @@ export class PlayersComponent {
       },
     };
     const dialogRef = this.dialog.open(EditPlayerComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe(async (res) => {
       if (res.success) {
         this.snackBar.open(`Player ${res.operation}`, 'Close');
+        this.loading.loadingOn();
+        await this.playerService
+          .getProgramPlayers(this.currentProgram().id)
+          .then(() => {
+            this.loading.loadingOff();
+          });
       }
     });
   }

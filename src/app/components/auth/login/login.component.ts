@@ -1,5 +1,6 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
+import { Component, inject } from '@angular/core';
+import { Auth, signInWithPopup } from '@angular/fire/auth';
+import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { EmailAuthProvider, GoogleAuthProvider } from 'firebase/auth';
 import * as firebaseui from 'firebaseui';
@@ -9,12 +10,24 @@ import * as firebaseui from 'firebaseui';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
+  imports: [MatButtonModule],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent {
   ui: firebaseui.auth.AuthUI;
 
   auth = inject(Auth);
   router = inject(Router);
+
+  googleLogin() {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(this.auth, provider)
+      .then((userCredential) => {
+        this.router.navigateByUrl('/programs');
+      })
+      .catch((error) => {
+        // Handle Google login error
+      });
+  }
 
   ngOnInit(): void {
     const uiConfig = {
@@ -27,10 +40,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       signInOptions: [
         {
           provider: EmailAuthProvider.PROVIDER_ID,
-          requireDisplayName: false,
-        },
-        {
-          provider: GoogleAuthProvider.PROVIDER_ID,
           requireDisplayName: false,
         },
       ],

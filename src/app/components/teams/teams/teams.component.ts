@@ -17,6 +17,7 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { TeamService } from '@services/team.service';
 import { UserService } from '@services/user.service';
+import { LoadingService } from '@shared/loading/loading.service';
 import { CoachRolePipe } from '@shared/pipes/coach-role.pipe';
 import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddTeamComponent } from '../add-team/add-team.component';
@@ -44,6 +45,7 @@ export class TeamsComponent {
   programService = inject(ProgramService);
   playerService = inject(PlayerService);
   teamService = inject(TeamService);
+  loading = inject(LoadingService);
   snackBar = inject(MatSnackBar);
   dialog = inject(MatDialog);
   analytics = inject(Analytics);
@@ -87,7 +89,12 @@ export class TeamsComponent {
   }
 
   async editTeam(team: Team): Promise<void> {
-    await this.teamService.getTeamCoaches(this.currentProgram().id, team.id);
+    this.loading.loadingOn();
+    await this.teamService
+      .getTeamCoaches(this.currentProgram().id, team.id)
+      .then(() => {
+        this.loading.loadingOff();
+      });
     const dialogConfig: MatDialogConfig = {
       data: {
         user: this.#user(),

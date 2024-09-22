@@ -414,13 +414,9 @@ export class PlayerService {
         batch.delete(doc.ref);
       });
 
-      // Check for references to guardians in team documents and remove them
-      const teamCollection = collection(
-        this.fs,
-        `programs/${player.programRef.id}/teams`
-      );
-      const teamsSnapshot = await getDocs(teamCollection);
-      teamsSnapshot.forEach((teamDoc) => {
+      // Check for references to guardians in the team document and remove them
+      if (player.teamRef) {
+        const teamDoc = await getDoc(player.teamRef);
         const teamData = teamDoc.data();
         const teamDocRef = doc(this.fs, `teams/${teamDoc.id}`);
         let updateRequired = false;
@@ -446,7 +442,7 @@ export class PlayerService {
         if (updateRequired) {
           batch.update(teamDocRef, updates);
         }
-      });
+      }
 
       // Commit the batch
       return await batch
@@ -571,7 +567,13 @@ export class PlayerService {
       collection(this.fs, 'players'),
       where('programRef', '==', programRef)
     );
-    const playersSnapshot = await getDocs(playerQuery);
+    let playersSnapshot;
+    try {
+      playersSnapshot = await getDocs(playerQuery);
+    } catch (error) {
+      console.error('Error fetching player documents:', error);
+      throw new Error('Failed to fetch player documents');
+    }
 
     // Update players to remove program and team references
     playersSnapshot.docs.forEach((doc) => {
