@@ -1,1 +1,27 @@
-<p>manage-users-help works!</p>
+<div class="help-dialog-header">
+  <h4>Manage Users Help</h4>
+  <mat-icon fontSet="material-symbols-outlined" mat-dialog-close
+    >close</mat-icon
+  >
+</div>
+<mat-dialog-content class="help-dialog-content">
+  <p>
+    This page allows you to manage users. You can assign a role to each user and
+    approve or disapprove users to give or remove app access.
+  </p>
+  <p>Each new user must be assigned a role before you can approve them.</p>
+  <p>
+    The app requires at least one active administrator at all times. You may not
+    change the role of the last active administrator. You also may not
+    disapprove the last active administrator.
+  </p>
+  <p>
+    You may not disapprove your own account. Another administrator must
+    disapprove your account for you.
+  </p>
+  <p>
+    If there is another active administrator and you change your own account
+    role to Commissioner, you will be automatically logged out and will need to
+    log back in.
+  </p>
+</mat-dialog-content>
