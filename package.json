@@ -1,6 +1,6 @@
 {
   "name": "youth-hockey-stat-tracker",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "type": "module",
   "scripts": {
     "ng": "ng",

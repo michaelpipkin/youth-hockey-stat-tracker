@@ -9,6 +9,7 @@ import { TeamService } from './team.service';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   documentId,
   Firestore,
@@ -156,23 +157,30 @@ export class ProgramService {
 
   async resetProgram(programId: string): Promise<any> {
     const programRef = doc(this.fs, `programs/${programId}`);
-    const teamsQuery = query(
-      collection(this.fs, `programs/${programId}/teams`)
-    );
-    const playersQuery = query(
-      collection(this.fs, 'players'),
-      where('programRef', '==', programRef)
-    );
-
     const batch = writeBatch(this.fs);
 
     // Delete all teams under the program
-    const teamsSnapshot = await getDocs(teamsQuery);
+    const teamsCollection = collection(this.fs, `programs/${programId}/teams`);
+    const teamsSnapshot = await getDocs(teamsCollection);
     teamsSnapshot.forEach((teamDoc) => {
       batch.delete(teamDoc.ref);
     });
 
+    // Delete all trades under the program
+    const tradesCollection = collection(
+      this.fs,
+      `programs/${programId}/trades`
+    );
+    const tradesSnapshot = await getDocs(tradesCollection);
+    tradesSnapshot.forEach((tradeDoc) => {
+      batch.delete(tradeDoc.ref);
+    });
+
     // Update all player documents that refer to the program
+    const playersQuery = query(
+      collection(this.fs, 'players'),
+      where('programRef', '==', programRef)
+    );
     const playersSnapshot = await getDocs(playersQuery);
     playersSnapshot.forEach((playerDoc) => {
       batch.update(playerDoc.ref, {
@@ -205,5 +213,29 @@ export class ProgramService {
         snapshot.docs.map((doc) => new Trade({ id: doc.id, ...doc.data() }))
       );
     });
+  }
+
+  async deleteTrade(programId: string, tradeId: string): Promise<any> {
+    const tradeRef = doc(this.fs, `programs/${programId}/trades/${tradeId}`);
+    return await deleteDoc(tradeRef);
+  }
+
+  async clearTrades(programId: string): Promise<any> {
+    const tradeCollection = collection(this.fs, `programs/${programId}/trades`);
+    const tradeSnapshot = await getDocs(tradeCollection);
+
+    const batch = writeBatch(this.fs);
+    tradeSnapshot.forEach((tradeDoc) => {
+      batch.delete(tradeDoc.ref);
+    });
+
+    return await batch
+      .commit()
+      .then(() => {
+        return true;
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
   }
 }

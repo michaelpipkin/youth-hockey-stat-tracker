@@ -147,7 +147,7 @@ export class ToolsComponent {
       data: {
         dialogTitle: 'WARNING!',
         confirmationText:
-          'Are you sure you want to reset the program? This will remove all players from the program and delete all teams. This action cannot be undone.',
+          'Are you sure you want to reset the program? This will remove all players from the program and delete all teams and trade history. This action cannot be undone.',
         cancelButtonText: 'No',
         confirmButtonText: 'Yes',
       },
