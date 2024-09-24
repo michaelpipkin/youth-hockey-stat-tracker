@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, Signal } from '@angular/core';
+import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { Analytics } from '@angular/fire/analytics';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +21,7 @@ import { AddTeamComponent } from '../add-team/add-team.component';
 import { EditTeamComponent } from '../edit-team/edit-team.component';
 import { GenerateTeamsComponent } from '../generate-teams/generate-teams.component';
 import { TeamsHelpComponent } from '../teams-help/teams-help.component';
+import { TradesComponent } from '../trades/trades.component';
 import { TransferPlayerComponent } from '../transfer-player/transfer-player.component';
 
 @Component({
@@ -50,6 +51,10 @@ export class TeamsComponent {
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
+
+  hasTrades = computed(() => {
+    return this.programService.programTrades().length > 0;
+  });
 
   public getTeamPlayers(teamId: string): Player[] {
     return this.players().filter((p) => p.teamRef?.id === teamId);
@@ -81,6 +86,10 @@ export class TeamsComponent {
         this.snackBar.open(`Teams generated`, 'Close');
       }
     });
+  }
+
+  viewTradeHistory(): void {
+    this.dialog.open(TradesComponent);
   }
 
   async editTeam(team: Team): Promise<void> {

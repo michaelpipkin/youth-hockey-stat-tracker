@@ -17,6 +17,11 @@
     </button>
     <button mat-flat-button (click)="addTeam()">Add New Team</button>
   </div>
+  <div class="mb-3" [class.hidden]="!hasTrades()">
+    <button mat-flat-button class="btn-secondary" (click)="viewTradeHistory()">
+      View Trade History
+    </button>
+  </div>
   <div class="team-cards">
     @for (team of teams(); track team.id) {
     <mat-card appearance="outlined">

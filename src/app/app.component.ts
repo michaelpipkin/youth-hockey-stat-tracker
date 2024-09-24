@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { FooterComponent } from '@components/footer/footer.component';
 import { Program } from '@models/program';
+import { AppUser } from '@models/user';
 import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
 import { LoadingComponent } from './shared/loading/loading.component';
@@ -40,6 +41,9 @@ export class AppComponent implements OnInit {
   isSmallScreen = signal<boolean>(false);
 
   isLoggedIn: Signal<boolean> = this.userService.isLoggedIn;
+  isApproved: Signal<boolean> = this.userService.isApproved;
+  isDirector: Signal<boolean> = this.userService.isDirector;
+  user: Signal<AppUser> = this.userService.user;
   activeProgram: Signal<Program> = this.programService.activeUserProgram;
 
   constructor() {
@@ -48,7 +52,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.breakpointObserver
-      .observe('(max-width: 896px)')
+      .observe('(max-width: 964px)')
       .subscribe((result) => {
         this.isSmallScreen.set(result.matches);
       });

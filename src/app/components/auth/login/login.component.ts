@@ -1,31 +1,27 @@
-import { Auth, signInWithPopup } from '@angular/fire/auth';
+import { Component, inject, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { UserService } from '@services/user.service';
+import { LoadingService } from '@shared/loading/loading.service';
 import {
-  Component,
-  ElementRef,
-  inject,
-  model,
-  signal,
-  viewChild,
-} from '@angular/core';
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  GoogleAuthProvider,
+  updateProfile,
+  signInWithPopup,
+} from '@angular/fire/auth';
 import {
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  createUserWithEmailAndPassword,
-  EmailAuthProvider,
-  fetchSignInMethodsForEmail,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -43,6 +39,8 @@ import {
 })
 export class LoginComponent {
   auth = inject(Auth);
+  userService = inject(UserService);
+  loading = inject(LoadingService);
   router = inject(Router);
   fb = inject(FormBuilder);
   snackbar = inject(MatSnackBar);
@@ -57,6 +55,7 @@ export class LoginComponent {
   });
 
   passwordForm = this.fb.group({
+    displayName: [''],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -86,6 +85,7 @@ export class LoginComponent {
     if (!signInMethods.includes('password')) {
       // New user
       this.newAccount.set(true);
+      this.passwordForm.get('displayName')?.setValidators(Validators.required);
     }
     this.step2Complete.set(true);
     this.emailForm.get('email')?.disable();
@@ -94,6 +94,7 @@ export class LoginComponent {
   resetForm() {
     this.emailForm.reset();
     this.passwordForm.reset();
+    this.passwordForm.get('displayName')?.clearValidators();
     this.emailForm.get('email')?.enable();
     this.emailForm.get('email')?.setErrors(null);
     this.emailForm.get('email')?.markAsPristine();
@@ -105,11 +106,23 @@ export class LoginComponent {
 
   async emailPasswordLogin() {
     const email = this.emailForm.value.email;
+    const displayName = this.passwordForm.value.displayName;
     const password = this.passwordForm.value.password;
     if (this.newAccount()) {
+      this.loading.loadingOn();
       await createUserWithEmailAndPassword(this.auth, email, password)
-        .then((userCredential) => {
-          this.router.navigateByUrl('/programs');
+        .then(async (userCredential) => {
+          await this.userService
+            .addUser(userCredential.user.uid, {
+              displayName,
+              email,
+              userType: null,
+              approved: false,
+            })
+            .then(() => {
+              this.router.navigateByUrl('/profile');
+              this.loading.loadingOff();
+            });
         })
         .catch((error) => {
           this.snackbar.open(error.message, 'Close');
@@ -128,15 +141,21 @@ export class LoginComponent {
   googleLogin() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(this.auth, provider)
-      .then((userCredential) => {
-        this.router.navigateByUrl('/programs');
+      .then(async (userCredential) => {
+        await this.userService
+          .addUser(userCredential.user.uid, {
+            displayName: userCredential.user.displayName,
+            email: userCredential.user.email,
+            userType: null,
+            approved: false,
+          })
+          .then(() => {
+            this.router.navigateByUrl('/programs');
+            this.loading.loadingOff();
+          });
       })
       .catch((error) => {
         this.snackbar.open(error.message, 'Close');
       });
-  }
-
-  onLoginSuccess() {
-    this.router.navigateByUrl('/programs');
   }
 }

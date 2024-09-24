@@ -32,6 +32,25 @@
       </button>
     </div>
   </form>
+  <h4>Update Display Name</h4>
+  <form [formGroup]="displayNameForm" class="container">
+    <mat-form-field id="displayName" subscriptSizing="dynamic">
+      <mat-label>Display Name</mat-label>
+      <input matInput formControlName="displayName" />
+      @if (d.displayName.errors?.['required']) {
+      <mat-error> Display name is required. </mat-error>
+      }
+    </mat-form-field>
+    <div>
+      <button
+        mat-flat-button
+        [disabled]="displayNameForm.invalid || displayNameForm.pristine"
+        (click)="onSubmitDisplayName()"
+      >
+        Update Display Name
+      </button>
+    </div>
+  </form>
   <h4>Change Your Password</h4>
   <form [formGroup]="passwordForm" class="container">
     <mat-form-field subscriptSizing="dynamic">
@@ -90,6 +109,12 @@
   </form>
 </div>
 <div class="container" [class.hidden]="!googleOnlyUser()">
-  <h4>Google User</h4>
-  <p>Your account is managed by Google.</p>
+  <h4>Google User Account</h4>
+  <p>Your email address and display name are managed by Google.</p>
+</div>
+<div class="container mt-3" [class.hidden]="appUser()?.approved">
+  <p>
+    Your account is pending approval. Please contact a director to request
+    approval.
+  </p>
 </div>

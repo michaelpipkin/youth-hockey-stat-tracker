@@ -1,22 +1,16 @@
+import { Component, inject, model, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Program } from '@models/program';
+import { AppUser } from '@models/user';
 import { ProgramService } from '@services/program.service';
 import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.component';
-import {
-  Component,
-  computed,
-  inject,
-  model,
-  signal,
-  Signal,
-} from '@angular/core';
 import {
   FormBuilder,
   FormsModule,
@@ -42,6 +36,7 @@ import {
     MatButtonModule,
     MatSelectModule,
     MatTooltipModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './edit-program.component.html',
   styleUrl: './edit-program.component.scss',
@@ -54,7 +49,7 @@ export class EditProgramComponent {
   analytics = inject(Analytics);
   dialog = inject(MatDialog);
   data: any = inject(MAT_DIALOG_DATA);
-  user: User = this.data.user;
+  user: AppUser = this.data.user;
 
   userPrograms: Signal<Program[]> = this.programService.userPrograms;
 
@@ -63,19 +58,24 @@ export class EditProgramComponent {
   editProgramForm = this.fb.group({
     name: [{ value: '', disabled: true }, Validators.required],
     description: { value: '', disabled: true },
+    active: { value: false, disabled: true },
   });
 
   public get f() {
     return this.editProgramForm.controls;
   }
 
+  //TODO: Add toggle to set active status of program
+
   onSelectProgram(): void {
     this.editProgramForm.patchValue({
       name: this.selectedProgram().name,
       description: this.selectedProgram().description,
+      active: this.selectedProgram().active,
     });
     this.f.name.enable();
     this.f.description.enable();
+    this.f.active.enable();
     this.editProgramForm.markAsPristine();
   }
 
@@ -85,9 +85,10 @@ export class EditProgramComponent {
     const updatedProgram: Partial<Program> = {
       name: formValues.name,
       description: formValues.description,
+      active: formValues.active,
     };
     this.programService
-      .updateProgram(this.selectedProgram().id, updatedProgram)
+      .updateProgram(this.selectedProgram().id, this.user, updatedProgram)
       .then(() => {
         this.dialogRef.close({ success: true, operation: 'updated' });
       })

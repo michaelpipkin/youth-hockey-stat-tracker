@@ -6,7 +6,7 @@
     </button>
     }
     <span id="title">Youth Hockey Tracker</span>
-    @if (!isSmallScreen()) { @if (isLoggedIn()) {
+    @if (!isSmallScreen()) { @if (isLoggedIn() && isApproved()) {
     <div class="links">
       <a mat-button routerLink="programs">
         <mat-icon fontSet="material-symbols-outlined">article</mat-icon>Programs
@@ -28,6 +28,11 @@
       <!-- <a mat-button routerLink="summary">
         <mat-icon fontSet="material-symbols-outlined">dataset</mat-icon>Summary
       </a> -->
+      } @if (isDirector()) {
+      <a mat-button routerLink="users">
+        <mat-icon fontSet="material-symbols-outlined">group</mat-icon>Manage
+        Users
+      </a>
       }
     </div>
     }
@@ -53,7 +58,7 @@
 
 <mat-menu #menu="matMenu">
   <div class="menu">
-    @if (isLoggedIn()) {
+    @if (isLoggedIn() && isApproved()) {
     <a mat-menu-item routerLink="programs"
       ><mat-icon fontSet="material-symbols-outlined">article</mat-icon
       >Programs</a
@@ -76,6 +81,10 @@
       ><mat-icon fontSet="material-symbols-outlined">dataset</mat-icon
       >Summary</a
     > -->
+    } @if (isDirector()) {
+    <a mat-menu-item routerLink="users">
+      <mat-icon fontSet="material-symbols-outlined">group</mat-icon>Manage Users
+    </a>
     }
     <a mat-menu-item routerLink="profile"
       ><mat-icon fontSet="material-symbols-outlined">account_circle</mat-icon

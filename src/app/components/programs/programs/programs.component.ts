@@ -6,9 +6,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Program } from '@models/program';
+import { AppUser } from '@models/user';
 import { ProgramService } from '@services/program.service';
 import { UserService } from '@services/user.service';
 import { LoadingService } from '@shared/loading/loading.service';
@@ -17,6 +19,7 @@ import { EditProgramComponent } from '../edit-program/edit-program.component';
 import { ProgramsHelpComponent } from '../programs-help/programs-help.component';
 import {
   Component,
+  computed,
   effect,
   inject,
   model,
@@ -35,6 +38,7 @@ import {
     MatButtonModule,
     MatInputModule,
     MatTooltipModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './programs.component.html',
   styleUrl: './programs.component.scss',
@@ -46,25 +50,23 @@ export class ProgramsComponent {
   dialog = inject(MatDialog);
   snackBar = inject(MatSnackBar);
 
-  #user: Signal<User> = this.userService.user;
-  userPrograms: Signal<Program[]> = this.programService.userPrograms;
-  #activeProgram: Signal<Program | null> =
-    this.programService.activeUserProgram;
+  #user: Signal<AppUser> = this.userService.user;
+  userPrograms = computed(() => {
+    return this.programService.userPrograms().filter((p) => p.active);
+  });
+  activeProgram: Signal<Program | null> = this.programService.activeUserProgram;
 
-  selectedProgramId = model<string>(this.#activeProgram()?.id ?? '');
-
-  programDescription = signal<string>(this.#activeProgram()?.description ?? '');
+  selectedProgramId = model<string>(this.activeProgram()?.id ?? '');
+  activeOnly = model<boolean>(true);
 
   constructor() {
     effect(
       () => {
-        const activeProgram = this.#activeProgram();
+        const activeProgram = this.activeProgram();
         if (activeProgram) {
           this.selectedProgramId.set(activeProgram.id);
-          this.programDescription.set(activeProgram.description);
         } else {
           this.selectedProgramId.set('');
-          this.programDescription.set('');
         }
       },
       {
@@ -73,13 +75,8 @@ export class ProgramsComponent {
     );
   }
 
-  async onSelectProgram(e: MatSelectChange): Promise<void> {
-    this.loading.loadingOn();
-    await this.programService
-      .setActiveProgram(this.#user().uid, e.value)
-      .then(() => {
-        this.loading.loadingOff();
-      });
+  onSelectProgram(e: MatSelectChange): void {
+    this.programService.setActiveProgram(e.value);
   }
 
   addProgram(): void {

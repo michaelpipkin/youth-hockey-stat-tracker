@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
-import { User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Program } from '@models/program';
+import { AppUser } from '@models/user';
 import { ProgramService } from '@services/program.service';
 import {
   FormBuilder,
@@ -29,6 +30,7 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './add-program.component.html',
   styleUrl: './add-program.component.scss',
@@ -40,7 +42,7 @@ export class AddProgramComponent {
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
   inputData: any = inject(MAT_DIALOG_DATA);
-  user: User = this.inputData.user;
+  user: AppUser = this.inputData.user;
 
   newProgramForm = this.fb.group({
     name: ['', Validators.required],
@@ -55,13 +57,12 @@ export class AddProgramComponent {
     this.newProgramForm.disable();
     const formValues = this.newProgramForm.value;
     const newProgram: Partial<Program> = {
-      ownerId: this.user.uid,
       name: formValues.name,
       description: formValues.description,
-      active: this.programService.userPrograms().length === 0,
+      active: true,
     };
     this.programService
-      .addProgram(newProgram)
+      .addProgram(this.user.id, newProgram)
       .then(() => {
         this.dialogRef.close(true);
       })

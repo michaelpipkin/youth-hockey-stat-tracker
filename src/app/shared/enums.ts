@@ -1,3 +1,8 @@
+export enum UserType {
+  C = 'Commissioner',
+  D = 'Director',
+}
+
 export enum TShirtSize {
   U = 'Unknown',
   YXS = 'Youth Extra Small',

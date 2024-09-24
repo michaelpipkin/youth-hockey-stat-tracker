@@ -28,6 +28,12 @@
         <input matInput formControlName="description" />
         <mat-hint>Optional</mat-hint>
       </mat-form-field>
+      <mat-slide-toggle
+        class="active-toggle"
+        formControlName="active"
+        class="mt-3"
+        >Active</mat-slide-toggle
+      >
     </div>
   </form>
 </mat-dialog-content>
@@ -63,12 +69,5 @@
       Delete
     </button>
   </div>
-  <button
-    mat-stroked-button
-    type="button"
-    [disabled]="editProgramForm.disabled"
-    mat-dialog-close
-  >
-    Cancel
-  </button>
+  <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
