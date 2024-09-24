@@ -1,9 +1,10 @@
+import { DocumentReference } from '@angular/fire/firestore';
 import { IEvaluation } from './evaluation';
 import { ITeam } from './team';
 
 export interface IProgram {
   id: string;
-  ownerId: string;
+  commissionerRef: DocumentReference;
   name: string;
   description: string;
   active: boolean;
@@ -16,7 +17,7 @@ export class Program implements IProgram {
     Object.assign(this, init);
   }
   public id: string;
-  public ownerId: string;
+  public commissionerRef: DocumentReference;
   public name: string;
   public description: string;
   public active: boolean;

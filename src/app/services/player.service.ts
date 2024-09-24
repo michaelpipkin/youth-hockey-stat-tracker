@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Guardian } from '@models/guardian';
 import { Player } from '@models/player';
+import { Trade } from '@models/trade';
 import { GuardianService } from './guardian.service';
 import {
   collection,
@@ -13,6 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  Timestamp,
   updateDoc,
   where,
   writeBatch,
@@ -695,6 +697,29 @@ export class PlayerService {
       teamRef: newTeamRef,
       jerseyNumber: '',
     });
+
+    // Get the new team document
+    const newTeamDoc = await getDoc(newTeamRef);
+    const newTeam = newTeamDoc.data().name;
+
+    // Get the old team document
+    const oldTeamDoc = await getDoc(oldTeamRef);
+    const oldTeam = oldTeamDoc.data().name;
+
+    const trade: Partial<Trade> = {
+      tradeDate: Timestamp.now(),
+      playerName: player.fullName,
+      fromTeam: oldTeam,
+      toTeam: newTeam,
+    };
+
+    // Update the trade history
+    const tradesCollection = collection(
+      this.fs,
+      `programs/${player.programRef.id}/trades`
+    );
+    const tradeDocRef = doc(tradesCollection);
+    batch.set(tradeDocRef, trade);
 
     // Get guardians collection under the player
     const guardiansCollection = collection(

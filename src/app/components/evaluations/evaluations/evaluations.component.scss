@@ -14,6 +14,12 @@
   gap: 16px;
 }
 
+@media (max-width: 1060px) {
+  .evaluations {
+    grid-template-columns: 1fr;
+  }
+}
+
 .evaluation {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;

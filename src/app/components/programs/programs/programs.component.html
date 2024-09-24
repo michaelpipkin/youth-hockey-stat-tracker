@@ -2,7 +2,7 @@
   <div class="page-header">
     <div></div>
     <mat-form-field id="program-select" subscriptSizing="dynamic">
-      <mat-label>Select Active Program</mat-label>
+      <mat-label>Select Program</mat-label>
       <mat-select
         [(ngModel)]="selectedProgramId"
         (selectionChange)="onSelectProgram($event)"
@@ -21,21 +21,16 @@
       >
     </div>
   </div>
-  @if (programDescription() !== '') {
+  @if (activeProgram()?.description !== '') {
   <div class="description">
-    <span> {{ programDescription() }} </span>
+    <span> {{ activeProgram()?.description ?? "" }} </span>
   </div>
   }
   <div class="buttons">
     <button type="button" mat-flat-button (click)="addProgram()">
       Add Program
     </button>
-    <button
-      type="button"
-      class="btn-secondary"
-      mat-flat-button
-      (click)="editPrograms()"
-    >
+    <button type="button" mat-flat-button (click)="editPrograms()">
       Manage Programs
     </button>
   </div>

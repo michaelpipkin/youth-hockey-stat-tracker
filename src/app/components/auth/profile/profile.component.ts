@@ -5,16 +5,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppUser } from '@models/user';
 import { UserService } from '@services/user.service';
+import { LoadingService } from '@shared/loading/loading.service';
 import * as firebase from 'firebase/auth';
 import { environment } from 'src/environments/environment';
 import {
   Component,
+  effect,
   inject,
   model,
   OnInit,
-  signal,
   Signal,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -42,10 +45,11 @@ export class ProfileComponent implements OnInit {
   fb = inject(FormBuilder);
   auth = inject(Auth);
   userService = inject(UserService);
+  loading = inject(LoadingService);
   snackBar = inject(MatSnackBar);
   analytics = inject(Analytics);
 
-  #user: Signal<firebase.User> = this.userService.user;
+  appUser: Signal<AppUser> = this.userService.user;
 
   firebaseUser = signal<firebase.User>(this.auth.currentUser);
   prod = signal<boolean>(environment.production);
@@ -54,8 +58,12 @@ export class ProfileComponent implements OnInit {
   hideConfirm = model<boolean>(true);
   googleOnlyUser = model<boolean>(false);
 
+  //TODO: Update form to allow for updating first and last name
   emailForm = this.fb.group({
-    email: [this.#user()?.email, Validators.email],
+    email: [this.firebaseUser()?.email, Validators.email],
+  });
+  displayNameForm = this.fb.group({
+    displayName: [this.appUser()?.displayName, Validators.required],
   });
   passwordForm = this.fb.group(
     {
@@ -65,13 +73,26 @@ export class ProfileComponent implements OnInit {
     { validators: this.passwordMatchValidator }
   );
 
+  constructor() {
+    effect(() => {
+      this.displayNameForm.patchValue({
+        displayName: this.appUser()?.displayName,
+      });
+    });
+  }
+
   ngOnInit(): void {
+    this.userService.getUser(this.auth.currentUser);
     if (
       this.auth.currentUser.providerData.length === 1 &&
       this.auth.currentUser.providerData[0].providerId === 'google.com'
     ) {
       this.googleOnlyUser.set(true);
     }
+  }
+
+  get d() {
+    return this.displayNameForm.controls;
   }
 
   get e() {
@@ -124,12 +145,21 @@ export class ProfileComponent implements OnInit {
     this.emailForm.disable();
     const newEmail = this.emailForm.value.email;
     if (newEmail !== this.firebaseUser().email) {
+      this.loading.loadingOn();
       firebase
         .updateEmail(this.firebaseUser(), newEmail)
-        .then(() => {
-          this.snackBar.open('Your email address has been updated.', 'Close', {
-            verticalPosition: 'top',
-          });
+        .then(async () => {
+          await this.userService
+            .updateUser(this.appUser().id, { email: newEmail })
+            .then(() => {
+              this.snackBar.open(
+                'Your email address has been updated.',
+                'Close',
+                {
+                  verticalPosition: 'top',
+                }
+              );
+            });
         })
         .catch((err) => {
           logEvent(this.analytics, 'error', {
@@ -154,9 +184,41 @@ export class ProfileComponent implements OnInit {
               }
             );
           }
+        })
+        .finally(() => {
+          this.loading.loadingOff();
         });
     }
     this.emailForm.enable();
+  }
+
+  onSubmitDisplayName(): void {
+    this.displayNameForm.disable();
+    const newDisplayName = this.displayNameForm.value.displayName;
+    if (newDisplayName !== this.appUser().displayName) {
+      this.loading.loadingOn();
+      this.userService
+        .updateUser(this.appUser().id, { displayName: newDisplayName })
+        .then(() => {
+          this.displayNameForm.markAsPristine();
+          this.snackBar.open('Your display name has been updated.', 'Close');
+        })
+        .catch((err) => {
+          logEvent(this.analytics, 'error', {
+            component: this.constructor.name,
+            action: 'update_display_name',
+            message: err.message,
+          });
+          this.snackBar.open(
+            'Something went wrong - your display name could not be updated.',
+            'Close'
+          );
+        })
+        .finally(() => {
+          this.loading.loadingOff();
+        });
+    }
+    this.displayNameForm.enable();
   }
 
   onSubmitPassword(): void {

@@ -1,0 +1,102 @@
+<div class="container pt-3 mb-2">
+  <div class="page-header">
+    <div></div>
+    <h3>Manage Users</h3>
+    <div class="help-icon">
+      <mat-icon
+        fontSet="material-symbols-outlined"
+        matTooltip="Help"
+        (click)="showHelp()"
+        >help</mat-icon
+      >
+    </div>
+  </div>
+  <div class="filters-1">
+    <mat-form-field appearance="fill" subscriptSizing="dynamic">
+      <mat-label>Search by name</mat-label>
+      <input matInput [(ngModel)]="nameFilter" />
+      @if (nameFilter() !== '') {
+      <button
+        matSuffix
+        tabindex="-1"
+        mat-icon-button
+        aria-label="Clear"
+        (click)="nameFilter.set('')"
+      >
+        <mat-icon fontSet="material-symbols-outlined">close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+    <mat-slide-toggle class="active-toggle" [(ngModel)]="approvedOnly"
+      >Only show approved users</mat-slide-toggle
+    >
+  </div>
+  <div class="table-container">
+    <div class="scrollable-table mat-elevation-z8">
+      <table
+        mat-table
+        matSort
+        [dataSource]="filteredUsers()"
+        (matSortChange)="sortUsers($event)"
+        class="dense-table"
+      >
+        @let columnsToDisplay = ['displayName', 'email', 'role', 'approved'];
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>Id</th>
+          <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="displayName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let user">{{ user.displayName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let user">
+            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <td mat-cell *matCellDef="let user">
+            <mat-form-field appearance="fill" subscriptSizing="dynamic">
+              <mat-label>Role</mat-label>
+              <mat-select
+                [value]="user.userType"
+                (selectionChange)="updateRole(user, $event)"
+              >
+                @for (role of roleOptions; track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="approved">
+          <th mat-header-cell *matHeaderCellDef>Approved</th>
+          <td
+            mat-cell
+            *matCellDef="let user"
+            matTooltip="You must select a user role before you can approve a user."
+            [matTooltipDisabled]="!!user.userType"
+          >
+            <mat-slide-toggle
+              [disabled]="!user.userType"
+              [checked]="user.approved"
+              (change)="toggleApproved(user, $event)"
+            ></mat-slide-toggle>
+          </td>
+        </ng-container>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="columnsToDisplay; sticky: true"
+        ></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [colSpan]="columnsToDisplay.length">
+            No users found matching the search criteria.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
