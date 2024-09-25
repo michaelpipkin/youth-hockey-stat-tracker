@@ -11,6 +11,7 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { LoadingService } from '@shared/loading/loading.service';
+import { environment } from 'src/environments/environment';
 import { ToolsHelpComponent } from '../tools-help/tools-help.component';
 
 @Component({
@@ -28,6 +29,8 @@ export class ToolsComponent {
   snackBar = inject(MatSnackBar);
   dialog = inject(MatDialog);
   analytics = inject(Analytics);
+
+  isProduction: Signal<boolean> = signal<boolean>(environment.production);
 
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
 
@@ -169,6 +172,43 @@ export class ToolsComponent {
             });
             this.snackBar.open(
               'Something went wrong - could not reset program',
+              'Close'
+            );
+          })
+          .finally(() => {
+            this.loading.loadingOff();
+          });
+      }
+    });
+  }
+
+  async clearAllData(): Promise<void> {
+    const dialogConfig: MatDialogConfig = {
+      data: {
+        dialogTitle: 'WARNING!',
+        confirmationText:
+          'Are you sure you want to clear all data? This action cannot be undone.',
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes',
+      },
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(async (confirm) => {
+      if (confirm) {
+        this.loading.loadingOn();
+        await this.programService
+          .clearAllData()
+          .then(() => {
+            this.snackBar.open('All data cleared', 'Close');
+          })
+          .catch((err: Error) => {
+            logEvent(this.analytics, 'error', {
+              component: this.constructor.name,
+              action: 'clearAllData',
+              message: err.message,
+            });
+            this.snackBar.open(
+              'Something went wrong - could not clear all data',
               'Close'
             );
           })
