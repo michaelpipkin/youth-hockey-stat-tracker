@@ -26,7 +26,8 @@
         (matSortChange)="sortTrades($event)"
         class="dense-table"
       >
-        @let columnsToDisplay = ['date', 'playerName', 'fromTeam', 'toTeam'];
+        @let columnsToDisplay = ['date', 'playerName', 'fromTeam', 'toTeam',
+        'delete'];
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
           <td mat-cell *matCellDef="let trade">
@@ -45,6 +46,18 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>To</th>
           <td mat-cell *matCellDef="let trade">{{ trade.toTeam }}</td>
         </ng-container>
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let trade">
+            <button
+              mat-icon-button
+              matTooltip="Delete trade"
+              (click)="deleteTrade(trade.id)"
+            >
+              <mat-icon fontSet="material-symbols-outlined">delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
         <tr class="mat-row" *matNoDataRow>
@@ -57,5 +70,13 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
+  <button
+    mat-flat-button
+    type="button"
+    class="btn-danger"
+    (click)="clearTrades()"
+  >
+    Clear All Trades
+  </button>
   <button mat-stroked-button type="button" mat-dialog-close>Close</button>
 </mat-dialog-actions>
