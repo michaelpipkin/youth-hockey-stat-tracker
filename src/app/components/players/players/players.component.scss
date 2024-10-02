@@ -27,3 +27,11 @@
   grid-template-columns: max-content max-content max-content;
   margin-bottom: 8px;
 }
+
+@media (max-width: 584px) {
+  .filters-1,
+  .filters-2,
+  .filters-3 {
+    grid-template-columns: max-content;
+  }
+}
