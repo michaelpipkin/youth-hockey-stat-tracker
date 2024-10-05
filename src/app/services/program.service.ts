@@ -238,4 +238,103 @@ export class ProgramService {
         throw new Error(err.message);
       });
   }
+
+  async clearAllData(): Promise<any> {
+    const batchLimit: number = 500;
+    let batch = writeBatch(this.fs);
+    let operationCount: number = 0;
+
+    const programsCollection = collection(this.fs, 'programs');
+    const programsSnapshot = await getDocs(programsCollection);
+    for (const programDoc of programsSnapshot.docs) {
+      const teamsCollection = collection(
+        this.fs,
+        `programs/${programDoc.id}/teams`
+      );
+      const teamsSnapshot = await getDocs(teamsCollection);
+      for (const teamDoc of teamsSnapshot.docs) {
+        batch.delete(teamDoc.ref);
+        operationCount++;
+        if (operationCount >= batchLimit) {
+          batch.commit();
+          batch = writeBatch(this.fs);
+          operationCount = 0;
+        }
+      }
+      const tradesCollection = collection(
+        this.fs,
+        `programs/${programDoc.id}/trades`
+      );
+      const tradesSnapshot = await getDocs(tradesCollection);
+      for (const tradeDoc of tradesSnapshot.docs) {
+        batch.delete(tradeDoc.ref);
+        operationCount++;
+        if (operationCount >= batchLimit) {
+          batch.commit();
+          batch = writeBatch(this.fs);
+          operationCount = 0;
+        }
+      }
+      const evaluationsCollection = collection(
+        this.fs,
+        `programs/${programDoc.id}/evaluations`
+      );
+      const evaluationsSnapshot = await getDocs(evaluationsCollection);
+      for (const evaluationDoc of evaluationsSnapshot.docs) {
+        batch.delete(evaluationDoc.ref);
+        operationCount++;
+        if (operationCount >= batchLimit) {
+          batch.commit();
+          batch = writeBatch(this.fs);
+          operationCount = 0;
+        }
+      }
+      batch.delete(programDoc.ref);
+      operationCount++;
+      if (operationCount >= batchLimit) {
+        batch.commit();
+        batch = writeBatch(this.fs);
+        operationCount = 0;
+      }
+    }
+
+    const playersCollection = collection(this.fs, 'players');
+    const playersSnapshot = await getDocs(playersCollection);
+    for (const playerDoc of playersSnapshot.docs) {
+      const guardiansCollection = collection(
+        this.fs,
+        `players/${playerDoc.id}/guardians`
+      );
+      const guardiansSnapshot = await getDocs(guardiansCollection);
+      for (const guardianDoc of guardiansSnapshot.docs) {
+        batch.delete(guardianDoc.ref);
+        operationCount++;
+        if (operationCount >= batchLimit) {
+          batch.commit();
+          batch = writeBatch(this.fs);
+          operationCount = 0;
+        }
+      }
+      batch.delete(playerDoc.ref);
+      operationCount++;
+      if (operationCount >= batchLimit) {
+        batch.commit();
+        batch = writeBatch(this.fs);
+        operationCount = 0;
+      }
+    }
+
+    if (operationCount > 0) {
+      return await batch
+        .commit()
+        .then(() => {
+          return true;
+        })
+        .catch((err: Error) => {
+          throw new Error(err.message);
+        });
+    }
+
+    return true;
+  }
 }

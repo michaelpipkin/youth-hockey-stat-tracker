@@ -20,13 +20,19 @@
   }
 }
 
+.evaluation-panel {
+  width: 431px;
+  height: fit-content;
+}
+
 .evaluation {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   column-gap: 8px;
   background-color: black;
   border: 2px solid black;
-  min-width: 420px;
+  width: 415px;
+  margin-left: -16px;
 }
 
 .category {

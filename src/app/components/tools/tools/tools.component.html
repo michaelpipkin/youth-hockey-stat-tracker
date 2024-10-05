@@ -24,5 +24,13 @@
     <button mat-flat-button class="btn-danger" (click)="resetProgram()">
       Reset Program
     </button>
+    <button
+      mat-flat-button
+      class="btn-danger"
+      [class.hidden]="isProduction()"
+      (click)="clearAllData()"
+    >
+      Clear All Data
+    </button>
   </div>
 </div>

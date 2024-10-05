@@ -23,7 +23,6 @@ import {
   effect,
   inject,
   model,
-  signal,
   Signal,
 } from '@angular/core';
 
