@@ -1,4 +1,12 @@
-import { Component, inject, model, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  model,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,7 +21,6 @@ import {
   signInWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   GoogleAuthProvider,
-  updateProfile,
   signInWithPopup,
 } from '@angular/fire/auth';
 import {
@@ -44,11 +51,16 @@ export class LoginComponent {
   router = inject(Router);
   fb = inject(FormBuilder);
   snackbar = inject(MatSnackBar);
+  cdr = inject(ChangeDetectorRef);
 
   step1Complete = signal<boolean>(false);
   step2Complete = signal<boolean>(false);
   hidePassword = model<boolean>(true);
   newAccount = model<boolean>(false);
+
+  emailField = viewChild<ElementRef>('emailInput');
+  passwordField = viewChild<ElementRef>('passwordInput');
+  nameField = viewChild<ElementRef>('nameInput');
 
   emailForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -73,6 +85,10 @@ export class LoginComponent {
 
   emailLogin() {
     this.step1Complete.set(true);
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.emailField().nativeElement.focus();
+    }, 0);
   }
 
   async checkEmail() {
@@ -89,6 +105,16 @@ export class LoginComponent {
     }
     this.step2Complete.set(true);
     this.emailForm.get('email')?.disable();
+    this.cdr.detectChanges();
+    if (this.newAccount()) {
+      setTimeout(() => {
+        this.nameField().nativeElement.focus();
+      }, 0);
+    } else {
+      setTimeout(() => {
+        this.passwordField().nativeElement.focus();
+      }, 0);
+    }
   }
 
   resetForm() {

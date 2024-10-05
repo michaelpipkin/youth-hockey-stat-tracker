@@ -112,14 +112,6 @@ mat-slide-toggle {
   width: 400px;
 }
 
-.firebaseui-idp-password {
-  background-color: mat.get-theme-color(
-    theme.$light-theme,
-    primary,
-    50
-  ) !important;
-}
-
 .scrollable-table {
   overflow-y: auto;
   max-height: 800px;
