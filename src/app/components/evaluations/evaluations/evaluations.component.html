@@ -12,10 +12,12 @@
     </div>
   </div>
   <div class="buttons mb-3">
-    <button mat-flat-button (click)="downloadForm()">
+    <button mat-raised-button class="btn-primary" (click)="downloadForm()">
       Download/Print Evaluation Form
     </button>
-    <button mat-flat-button (click)="addEvaluation()">Add Evaluation</button>
+    <button mat-raised-button class="btn-primary" (click)="addEvaluation()">
+      Add Evaluation
+    </button>
   </div>
   <div class="evaluations">
     @for (evaluation of evaluations(); track evaluation.id) {
@@ -117,17 +119,18 @@
       </div>
       <mat-action-row>
         <button
+          mat-raised-button
+          class="btn-primary"
           type="button"
-          mat-flat-button
           (click)="editEvaluation(evaluation)"
         >
           Edit Evaluation
         </button>
         <button
-          mat-flat-button
+          mat-raised-button
+          class="btn-danger"
           type="button"
           (click)="deleteEvaluation(evaluation)"
-          class="btn-danger"
         >
           Delete Evaluation
         </button>

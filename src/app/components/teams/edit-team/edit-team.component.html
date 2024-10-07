@@ -53,20 +53,20 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button
-      mat-flat-button
-      type="submit"
+      mat-raised-button
       class="btn-tertiary"
+      type="submit"
       [disabled]="teamForm.invalid || teamForm.pristine || teamForm.disabled"
       (click)="onSubmit()"
     >
       Save Changes
     </button>
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-danger"
       type="button"
       [disabled]="teamForm.disabled"
       (click)="deleteTeam()"
-      class="btn-danger"
     >
       Delete Team
     </button>
