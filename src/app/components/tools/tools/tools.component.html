@@ -12,20 +12,28 @@
     </div>
   </div>
   <div class="buttons">
-    <button mat-flat-button (click)="processEvaluations()">
+    <button
+      mat-raised-button
+      class="btn-primary"
+      (click)="processEvaluations()"
+    >
       Process Evaluations
     </button>
-    <button mat-flat-button (click)="assignPlayersToTeams()">
+    <button
+      mat-raised-button
+      class="btn-primary"
+      (click)="assignPlayersToTeams()"
+    >
       Auto-assign Players to Teams
     </button>
-    <button mat-flat-button (click)="clearAllTeams()">
+    <button mat-raised-button class="btn-primary" (click)="clearAllTeams()">
       Remove All Players from Teams
     </button>
-    <button mat-flat-button class="btn-danger" (click)="resetProgram()">
+    <button mat-raised-button class="btn-danger" (click)="resetProgram()">
       Reset Program
     </button>
     <button
-      mat-flat-button
+      mat-raised-button
       class="btn-danger"
       [class.hidden]="isProduction()"
       (click)="clearAllData()"

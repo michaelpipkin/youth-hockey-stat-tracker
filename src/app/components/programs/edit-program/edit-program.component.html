@@ -39,9 +39,9 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button
-    mat-flat-button
-    type="submit"
+    mat-raised-button
     class="btn-tertiary"
+    type="submit"
     [disabled]="
       !editProgramForm.valid ||
       editProgramForm.pristine ||
@@ -56,10 +56,10 @@
     [matTooltipDisabled]="!selectedProgram()?.active"
   >
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-danger"
       type="button"
       (click)="deleteProgram()"
-      class="btn-danger"
       [disabled]="
         !selectedProgram() ||
         selectedProgram()?.active ||

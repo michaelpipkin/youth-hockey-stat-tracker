@@ -10,7 +10,8 @@
     </mat-form-field>
     <div class="buttons">
       <button
-        mat-flat-button
+        mat-raised-button
+        class="btn-primary"
         type="button"
         [disabled]="firebaseUser()?.emailVerified"
         (click)="verifyEmail()"
@@ -18,9 +19,9 @@
         {{ firebaseUser()?.emailVerified ? "Email Verified" : "Verify Email" }}
       </button>
       <button
-        type="submit"
+        mat-raised-button
         class="btn-secondary"
-        mat-flat-button
+        type="submit"
         [disabled]="
           emailForm.invalid ||
           e.email?.value === firebaseUser()?.email ||
@@ -43,7 +44,8 @@
     </mat-form-field>
     <div>
       <button
-        mat-flat-button
+        mat-raised-button
+        class="btn-primary"
         [disabled]="displayNameForm.invalid || displayNameForm.pristine"
         (click)="onSubmitDisplayName()"
       >
@@ -97,7 +99,8 @@
     <mat-error> Passwords do not match. </mat-error>
     }
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-primary"
       [disabled]="
         passwordForm.invalid ||
         passwordForm.controls.confirmPassword.value === ''

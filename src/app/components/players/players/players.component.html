@@ -54,15 +54,18 @@
     >
   </div>
   <div class="filters-3">
-    <button mat-flat-button (click)="addNewPlayer()">Add New Player</button>
+    <button mat-raised-button class="btn-primary" (click)="addNewPlayer()">
+      Add New Player
+    </button>
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-primary"
       (click)="assignPlayers()"
       [disabled]="getCheckedPlayers().length === 0"
     >
       Assign Selected Players
     </button>
-    <button mat-flat-button (click)="clearPlayers()">
+    <button mat-raised-button class="btn-primary" (click)="clearPlayers()">
       Clear Program Players
     </button>
   </div>

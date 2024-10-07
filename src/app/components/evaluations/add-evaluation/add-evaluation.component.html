@@ -175,13 +175,13 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button
-      mat-flat-button
-      type="submit"
+      mat-raised-button
       class="btn-tertiary"
+      type="submit"
       [disabled]="evaluationForm.invalid || evaluationForm.disabled"
       (click)="onSubmit()"
     >
-      Add Evaluation
+      Save Evaluation
     </button>
     <button
       mat-stroked-button

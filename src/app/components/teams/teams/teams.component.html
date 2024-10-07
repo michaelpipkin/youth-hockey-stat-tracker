@@ -12,13 +12,19 @@
     </div>
   </div>
   <div class="buttons mb-3">
-    <button mat-flat-button (click)="generateTeams()">
+    <button mat-raised-button class="btn-primary" (click)="generateTeams()">
       Generate New Teams
     </button>
-    <button mat-flat-button (click)="addTeam()">Add New Team</button>
+    <button mat-raised-button class="btn-primary" (click)="addTeam()">
+      Add New Team
+    </button>
   </div>
   <div class="mb-3" [class.hidden]="!hasTrades()">
-    <button mat-flat-button class="btn-secondary" (click)="viewTradeHistory()">
+    <button
+      mat-raised-button
+      class="btn-secondary"
+      (click)="viewTradeHistory()"
+    >
       View Trade History
     </button>
   </div>

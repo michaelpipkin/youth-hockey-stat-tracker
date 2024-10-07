@@ -219,9 +219,9 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button
-      mat-flat-button
-      type="submit"
+      mat-raised-button
       class="btn-tertiary"
+      type="submit"
       [disabled]="
         playerForm.invalid || playerForm.pristine || playerForm.disabled
       "
@@ -230,11 +230,11 @@
       Save Changes
     </button>
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-danger"
       type="button"
       [disabled]="playerForm.disabled"
       (click)="deletePlayer()"
-      class="btn-danger"
     >
       Delete Player
     </button>

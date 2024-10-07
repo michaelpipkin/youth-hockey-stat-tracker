@@ -16,7 +16,8 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button
-      mat-flat-button
+      mat-raised-button
+      class="btn-primary"
       type="submit"
       [disabled]="newProgramForm.invalid || newProgramForm.disabled"
       (click)="onSubmit()"
