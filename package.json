@@ -29,6 +29,8 @@
     "@angular/platform-browser-dynamic": "^18.2.7",
     "@angular/router": "^18.2.7",
     "bootstrap": "^5.3.3",
+    "firebase": "^10.14.0",
+    "firebase-admin": "^12.6.0",
     "replace-in-file": "^8.2.0",
     "tslib": "^2.7.0",
     "zone.js": "^0.14.10"
