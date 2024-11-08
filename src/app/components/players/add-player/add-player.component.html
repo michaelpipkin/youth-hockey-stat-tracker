@@ -72,7 +72,7 @@
       </mat-form-field>
       <mat-form-field appearance="fill" class="zip-code">
         <mat-label>Zip Code</mat-label>
-        <input matInput formControlName="zipCode" maxlength="5" />
+        <input matInput formControlName="zipCode" maxlength="10" />
         @if (f.zipCode.errors?.['required']) {
         <mat-error>*Required</mat-error>
         } @if (f.zipCode.errors?.['pattern']) {

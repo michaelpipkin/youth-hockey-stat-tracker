@@ -103,7 +103,7 @@
         <th mat-header-cell *matHeaderCellDef>Gender</th>
         <td mat-cell *matCellDef="let player">
           {{ player.gender }}
-          @if (player.pronouns !== '') { ({{ player.pronouns }}) }
+          @if (!!player.pronouns) { ({{ player.pronouns }}) }
         </td>
       </ng-container>
       <ng-container matColumnDef="age">

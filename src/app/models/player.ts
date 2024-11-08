@@ -13,14 +13,14 @@ export interface IPlayer {
   birthDate: Timestamp;
   address: IAddress;
   guardians: IGuardian[];
-  tryoutNumber: string;
-  jerseyNumber: string;
-  evaluationScore: number;
-  totalLooks: number;
+  tryoutNumber?: string;
+  jerseyNumber?: string;
+  evaluationScore?: number;
+  totalLooks?: number;
   tShirtSize: TShirtSize;
   goalie: Goalie;
-  programRef: DocumentReference;
-  teamRef: DocumentReference;
+  programRef?: DocumentReference;
+  teamRef?: DocumentReference;
   usaHockeyNumber: string;
   importantInfo: string;
 }
@@ -37,16 +37,16 @@ export class Player implements IPlayer {
   public birthDate: Timestamp;
   public address: IAddress;
   public guardians: IGuardian[];
-  public tryoutNumber: string;
-  public jerseyNumber: string;
-  public evaluationScore: number;
-  public totalLooks: number;
+  public tryoutNumber?: string;
+  public jerseyNumber?: string;
+  public evaluationScore?: number;
+  public totalLooks?: number;
   public tShirtSize: TShirtSize;
   public goalie: Goalie;
-  public programRef: DocumentReference;
-  public teamRef: DocumentReference;
+  public programRef?: DocumentReference;
+  public teamRef?: DocumentReference;
   public usaHockeyNumber: string;
-  public importantInfo: string;
+  public importantInfo: string = '';
   public get age(): number {
     const today = new Date();
     const birthDate = new Date(this.birthDate.toDate());

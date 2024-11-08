@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Import Players</h1>
+<mat-dialog-content class="content">
+  <p>
+    Duplicate players (based on name and date of birth) will not be imported.
+  </p>
+  <div class="attachment-container">
+    @if (!!fileName()) {
+    <div (click)="removeFile()" class="attachment">
+      <button mat-mini-fab class="btn btn-danger">
+        <mat-icon fontSet="material-symbols-outlined">delete</mat-icon>
+      </button>
+      <span class="filename">{{ fileName() }}</span>
+    </div>
+    } @else {
+    <div (click)="attachFile.click()" class="attachment">
+      <input
+        type="file"
+        accept=".xlsx, .xlsm, .xlsb, .xls"
+        class="hidden"
+        #attachFile
+        (change)="onFileSelected($event)"
+      />
+      <button mat-mini-fab class="btn btn-success">
+        <mat-icon fontSet="material-symbols-outlined">attach_file</mat-icon>
+      </button>
+      <span class="filename">Select Excel file</span>
+    </div>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    class="btn-tertiary"
+    type="submit"
+    [disabled]="file() === null"
+    (click)="onSubmit()"
+  >
+    Import
+  </button>
+  <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
+</mat-dialog-actions>
