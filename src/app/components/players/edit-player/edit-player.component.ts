@@ -90,7 +90,7 @@ export class EditPlayerComponent {
     ],
     zipCode: [
       this.player.address.zipCode,
-      [Validators.required, Validators.pattern('^[0-9]{5}$')],
+      [Validators.required, Validators.pattern('^[0-9]{5}(?:-[0-9]{4})?$')],
     ],
     usaHockeyNumber: [this.player.usaHockeyNumber, Validators.required],
     goalie: [this.player.goalie, Validators.required],
@@ -192,7 +192,7 @@ export class EditPlayerComponent {
       tShirtSize: playerData.tShirtSize,
       importantInfo: playerData.importantInfo,
       tryoutNumber: playerData.tryoutNumber,
-      jerseyNumber: playerData.jerseyNumber,
+      jerseyNumber: !!playerData.jerseyNumber ? playerData.jerseyNumber : '',
       programRef: this.player.programRef,
     };
     this.playerService

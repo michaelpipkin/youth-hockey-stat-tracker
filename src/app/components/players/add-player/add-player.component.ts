@@ -80,7 +80,10 @@ export class AddPlayerComponent {
     street2: [''],
     city: ['', Validators.required],
     state: ['', [Validators.required, Validators.pattern('^[A-Z]{2}$')]],
-    zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+    zipCode: [
+      '',
+      [Validators.required, Validators.pattern('^[0-9]{5}(?:-[0-9]{4})?$')],
+    ],
     usaHockeyNumber: ['', Validators.required],
     goalie: [Goalie.N, Validators.required],
     tShirtSize: [TShirtSize.U, Validators.required],

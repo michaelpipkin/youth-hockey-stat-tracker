@@ -1,6 +1,6 @@
 {
   "name": "youth-hockey-stat-tracker",
-  "version": "0.1.17",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "ng": "ng",
@@ -29,6 +29,8 @@
     "@angular/platform-browser-dynamic": "^18.2.11",
     "@angular/router": "^18.2.11",
     "bootstrap": "^5.3.3",
+    "buffer": "^6.0.3",
+    "exceljs": "^4.4.0",
     "firebase": "^10.14.1",
     "firebase-admin": "^12.7.0",
     "replace-in-file": "^8.2.0",
@@ -40,6 +42,7 @@
     "@angular/cli": "^18.2.11",
     "@angular/compiler-cli": "^18.2.11",
     "@types/jasmine": "~5.1.0",
+    "@types/node": "^22.9.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

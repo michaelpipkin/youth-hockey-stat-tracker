@@ -12,6 +12,7 @@ import { ProgramService } from '@services/program.service';
 import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { LoadingService } from '@shared/loading/loading.service';
 import { environment } from 'src/environments/environment';
+import { ImportPlayersComponent } from '../import-players/import-players.component';
 import { ToolsHelpComponent } from '../tools-help/tools-help.component';
 
 @Component({
@@ -33,6 +34,15 @@ export class ToolsComponent {
   isProduction: Signal<boolean> = signal<boolean>(environment.production);
 
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
+
+  importPlayers(): void {
+    const dialogConfig: MatDialogConfig = {
+      data: {
+        programId: this.currentProgram().id,
+      },
+    };
+    this.dialog.open(ImportPlayersComponent, dialogConfig);
+  }
 
   async processEvaluations(): Promise<void> {
     const dialogConfig: MatDialogConfig = {

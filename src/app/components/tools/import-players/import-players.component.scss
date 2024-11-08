@@ -1,0 +1,11 @@
+.attachment-container {
+  width: 100%;
+}
+
+.attachment {
+  display: grid;
+  grid-template-columns: max-content auto;
+  align-items: center;
+  column-gap: 8px;
+  margin-bottom: 8px;
+}

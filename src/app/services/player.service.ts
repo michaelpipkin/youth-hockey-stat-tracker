@@ -256,7 +256,7 @@ export class PlayerService {
     // Create a reference to the players collection
     const coll = collection(this.fs, 'players');
 
-    // Query to check for existing players with the same first name, last name, and birth date
+    // Check if a player with the same name and birth date already exists
     const q1 = query(
       coll,
       where('firstName', '==', player.firstName),
@@ -265,45 +265,38 @@ export class PlayerService {
       where(documentId(), '!=', playerId)
     );
 
-    // Query to check for existing players with the same tryout number in the same program
-    const q2 = query(
-      coll,
-      where('programRef', '==', player.programRef),
-      where('tryoutNumber', '==', player.tryoutNumber),
-      where(documentId(), '!=', playerId)
-    );
-
-    // Query to check for existing players with the same jersey number on the same team
-    const q3 = query(
-      coll,
-      where('teamRef', '==', player.teamRef),
-      where('jerseyNumber', '==', player.jerseyNumber),
-      where(documentId(), '!=', playerId)
-    );
-
-    // Check if a player with the same name and birth date already exists
     if (!(await getDocs(q1)).empty) {
       throw new Error('A player with this name and birth date already exists.');
     }
+
     // Check if a player with the same tryout number already exists in the program
-    if (
-      player.programRef !== null &&
-      player.tryoutNumber !== '' &&
-      !(await getDocs(q2)).empty
-    ) {
-      throw new Error(
-        'A player with this tryout number already exists in this program.'
+    if (player.programRef !== null && player.tryoutNumber !== '') {
+      const q2 = query(
+        coll,
+        where('programRef', '==', player.programRef),
+        where('tryoutNumber', '==', player.tryoutNumber),
+        where(documentId(), '!=', playerId)
       );
+      if (!(await getDocs(q2)).empty) {
+        throw new Error(
+          'A player with this tryout number already exists in this program.'
+        );
+      }
     }
+
     // Check if a player with the same jersey number already exists on the same team
-    if (
-      player.teamRef !== null &&
-      player.jerseyNumber !== '' &&
-      !(await getDocs(q3)).empty
-    ) {
-      throw new Error(
-        'A player with this jersey number already exists on the same team.'
+    if (player.teamRef !== null && player.jerseyNumber !== '') {
+      const q3 = query(
+        coll,
+        where('teamRef', '==', player.teamRef),
+        where('jerseyNumber', '==', player.jerseyNumber),
+        where(documentId(), '!=', playerId)
       );
+      if (!(await getDocs(q3)).empty) {
+        throw new Error(
+          'A player with this jersey number already exists on the same team.'
+        );
+      }
     }
     const batch = writeBatch(this.fs);
     // Update the player document
