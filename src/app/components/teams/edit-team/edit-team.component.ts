@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { DocumentReference } from '@angular/fire/firestore';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,7 @@ import { Team } from '@models/team';
 import { PlayerService } from '@services/player.service';
 import { TeamService } from '@services/team.service';
 import { DeleteDialogComponent } from '@shared/delete-dialog/delete-dialog.component';
+import { Coach } from '@shared/enums';
 import {
   FormBuilder,
   FormsModule,
@@ -61,6 +62,15 @@ export class EditTeamComponent {
   team: Team = this.data.team;
 
   coaches: Signal<Guardian[]> = this.teamService.currentTeamCoaches;
+  headCoaches = computed(() =>
+    this.coaches().filter((c) => c.availableCoachRole === Coach.HC)
+  );
+  assistantCoaches = computed(() =>
+    this.coaches().filter((c) => c.availableCoachRole === Coach.AC)
+  );
+  managers = computed(() =>
+    this.coaches().filter((c) => c.availableCoachRole === Coach.M)
+  );
   coachRefs: Signal<DocumentReference[]> =
     this.teamService.currentTeamCoachRefs;
 

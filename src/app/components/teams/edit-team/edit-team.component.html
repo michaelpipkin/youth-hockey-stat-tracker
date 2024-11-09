@@ -14,7 +14,7 @@
       <mat-label>Head Coach</mat-label>
       <mat-select formControlName="headCoachId">
         <mat-option value="0">Unassigned</mat-option>
-        @for (coach of coaches(); track coach.id) {
+        @for (coach of headCoaches(); track coach.id) {
         <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
         }
       </mat-select>
@@ -23,7 +23,7 @@
       <mat-label>Assistant Coach 1</mat-label>
       <mat-select formControlName="assistantCoach1Id">
         <mat-option value="0">Unassigned</mat-option>
-        @for (coach of coaches(); track coach.id) {
+        @for (coach of assistantCoaches(); track coach.id) {
         <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
         }
       </mat-select>
@@ -32,7 +32,7 @@
       <mat-label>Assistant Coach 2</mat-label>
       <mat-select formControlName="assistantCoach2Id">
         <mat-option value="0">Unassigned</mat-option>
-        @for (coach of coaches(); track coach.id) {
+        @for (coach of assistantCoaches(); track coach.id) {
         <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
         }
       </mat-select>
@@ -41,7 +41,7 @@
       <mat-label>Manager</mat-label>
       <mat-select formControlName="managerId">
         <mat-option value="0">Unassigned</mat-option>
-        @for (coach of coaches(); track coach.id) {
+        @for (coach of managers(); track coach.id) {
         <mat-option [value]="coach.id">{{ coach.fullName }}</mat-option>
         }
       </mat-select>

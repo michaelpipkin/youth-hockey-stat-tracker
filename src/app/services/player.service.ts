@@ -184,7 +184,8 @@ export class PlayerService {
   async addPlayer(
     player: Partial<Player>,
     guardians: Partial<Guardian>[],
-    programId: string = ''
+    programId: string = '',
+    fromImport: boolean = false
   ): Promise<any> {
     // Check if programId is provided
     if (programId !== '') {
@@ -210,7 +211,23 @@ export class PlayerService {
 
     // Check if there are any existing players with the same details
     if (!snapshot.empty) {
-      throw new Error('Player already exists');
+      if (fromImport) {
+        // If the player is being imported, update the existing player
+        const existingPlayer = snapshot.docs[0];
+        player.teamRef = null;
+        player.evaluationScore = 0;
+        player.totalLooks = 0;
+        player.jerseyNumber = '';
+        return await updateDoc(existingPlayer.ref, player)
+          .then(() => {
+            return existingPlayer.id;
+          })
+          .catch((err: Error) => {
+            throw new Error(err.message);
+          });
+      } else {
+        throw new Error('Player already exists');
+      }
     }
 
     // Create a batch

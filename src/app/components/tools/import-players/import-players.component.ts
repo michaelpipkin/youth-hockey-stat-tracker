@@ -52,9 +52,10 @@ export class ImportPlayersComponent {
   disableForm = signal<boolean>(false);
   importErrors = signal<boolean>(false);
 
-  onFileSelected(e): void {
-    if (e.target.files.length > 0) {
-      const file: File = e.target.files[0];
+  onFileSelected(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file: File = input.files[0];
       this.file.set(file);
       this.fileName.set(file.name);
     }
@@ -153,7 +154,7 @@ export class ImportPlayersComponent {
                 }
 
                 const playerPromise = this.playerService
-                  .addPlayer(player, guardians, this.programId)
+                  .addPlayer(player, guardians, this.programId, true)
                   .then(() => {
                     console.log(
                       `Player added: ${player.firstName} ${player.lastName}`
