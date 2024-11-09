@@ -72,8 +72,10 @@ export class Player implements IPlayer {
 
   public get rosterName(): string {
     let name = `${this.firstName} ${this.lastName}`;
-    if (this.goalie === Goalie.Y || this.goalie === Goalie.M) {
+    if (this.goalie === Goalie.Y) {
       name += ' (G)';
+    } else if (this.goalie === Goalie.M) {
+      name += ' (G?)';
     }
     const coachRole = this.parentCoach;
     if (coachRole) {

@@ -16,6 +16,7 @@ export interface ITeam {
   assistantCoach2: Guardian;
   managerRef: DocumentReference;
   manager: Guardian;
+  otherCoaches: string;
 }
 
 export class Team implements ITeam {
@@ -35,8 +36,14 @@ export class Team implements ITeam {
   public managerRef: DocumentReference;
   public manager: Guardian;
   public otherCoaches: string;
-  public get hasGoalie(): boolean {
-    return this.players.some((player) => player.goalie === Goalie.Y);
+  public get hasGoalie(): string {
+    if (this.players.some((player) => player.goalie === Goalie.Y)) {
+      return 'Yes';
+    } else if (this.players.some((player) => player.goalie === Goalie.M)) {
+      return 'Maybe';
+    } else {
+      return 'No';
+    }
   }
   public get femaleNbPlayerCount(): number {
     return this.players.filter((player) => player.gender !== Gender.M).length;

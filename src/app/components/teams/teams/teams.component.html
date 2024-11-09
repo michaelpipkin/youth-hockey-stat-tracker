@@ -102,7 +102,7 @@
             >Average evaluation score:
             {{ team.averageScore | number : "1.2-2" }}</span
           >
-          <span>Team has goalie: {{ team.hasGoalie | yesNo }}</span>
+          <span>Team has goalie: {{ team.hasGoalie }}</span>
           <span>Head coach: {{ team.headCoach?.fullName }}</span>
           <span>Assistant coach 1: {{ team.assistantCoach1?.fullName }}</span>
           <span>Assistant coach 2: {{ team.assistantCoach2?.fullName }}</span>

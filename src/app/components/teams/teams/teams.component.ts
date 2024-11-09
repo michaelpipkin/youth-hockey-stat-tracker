@@ -15,8 +15,6 @@ import { PlayerService } from '@services/player.service';
 import { ProgramService } from '@services/program.service';
 import { TeamService } from '@services/team.service';
 import { LoadingService } from '@shared/loading/loading.service';
-import { CoachRolePipe } from '@shared/pipes/coach-role.pipe';
-import { YesNoPipe } from '@shared/pipes/yes-no.pipe';
 import { AddTeamComponent } from '../add-team/add-team.component';
 import { EditTeamComponent } from '../edit-team/edit-team.component';
 import { GenerateTeamsComponent } from '../generate-teams/generate-teams.component';
@@ -32,9 +30,7 @@ import { TransferPlayerComponent } from '../transfer-player/transfer-player.comp
     MatCardModule,
     MatButtonModule,
     MatTooltipModule,
-    YesNoPipe,
     DecimalPipe,
-    CoachRolePipe,
   ],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
