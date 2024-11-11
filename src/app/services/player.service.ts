@@ -99,17 +99,37 @@ export class PlayerService {
     // Process the combined snapshot initially
     await processSnapshot(combinedSnapshot);
 
+    const refreshQueries = async () => {
+      const [assignedPlayersSnapshot, unassignedPlayersSnapshot] =
+        await Promise.all([
+          getDocs(playerQuery),
+          getDocs(unassignedPlayerQuery),
+        ]);
+
+      const combinedSnapshot = {
+        docs: [
+          ...assignedPlayersSnapshot.docs,
+          ...unassignedPlayersSnapshot.docs,
+        ],
+      };
+
+      await processSnapshot(combinedSnapshot);
+    };
+
+    // Initial fetch
+    await refreshQueries();
+
     // Listen for changes in the assigned players query
     onSnapshot(playerQuery, async (snapshot) => {
       if (!snapshot.empty) {
-        await processSnapshot(snapshot);
+        await refreshQueries(); // Re-run both queries
       }
     });
 
     // Listen for changes in the unassigned players query
     onSnapshot(unassignedPlayerQuery, async (snapshot) => {
       if (!snapshot.empty) {
-        await processSnapshot(snapshot);
+        await refreshQueries(); // Re-run both queries
       }
     });
   }
@@ -220,7 +240,7 @@ export class PlayerService {
         player.jerseyNumber = '';
         return await updateDoc(existingPlayer.ref, player)
           .then(() => {
-            return existingPlayer.id;
+            return 0;
           })
           .catch((err: Error) => {
             throw new Error(err.message);
@@ -489,10 +509,10 @@ export class PlayerService {
   ): Promise<any> {
     const programRef = doc(this.fs, `programs/${programId}`);
     const batch = writeBatch(this.fs);
-    playerIds.forEach((playerId) => {
+    for (const playerId of playerIds) {
       const playerRef = doc(this.fs, `players/${playerId}`);
       batch.update(playerRef, { programRef: programRef });
-    });
+    }
     return await batch
       .commit()
       .then(() => {

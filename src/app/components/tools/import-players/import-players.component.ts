@@ -88,7 +88,7 @@ export class ImportPlayersComponent {
 
             const rowPromises = [];
             for (const row of worksheet.getRows(2, worksheet.rowCount - 1)) {
-              if (row.getCell(4).value?.toString() !== 'Withdraw') {
+              if (row.getCell(2).value !== null) {
                 const lastNameValue = row.getCell(4).value?.toString();
                 const parentheticalRegex = /\(([^)]+)\)/g;
                 // Extract values inside parentheses
@@ -155,11 +155,13 @@ export class ImportPlayersComponent {
 
                 const playerPromise = this.playerService
                   .addPlayer(player, guardians, this.programId, true)
-                  .then(() => {
-                    console.log(
-                      `Player added: ${player.firstName} ${player.lastName}`
-                    );
-                    recordCount++;
+                  .then((result) => {
+                    if (result !== 0) {
+                      console.log(
+                        `Player added: ${player.firstName} ${player.lastName}`
+                      );
+                      recordCount++;
+                    }
                   })
                   .catch((err) => {
                     logEvent(this.analytics, 'error', {
@@ -208,7 +210,9 @@ export class ImportPlayersComponent {
           });
         } else {
           this.snackBar.open(
-            `Success! Imported ${recordCount} players.`,
+            `Success! Imported ${recordCount} ${
+              recordCount > 1 ? 'players' : 'player'
+            }.`,
             'Close',
             {
               verticalPosition: 'top',
