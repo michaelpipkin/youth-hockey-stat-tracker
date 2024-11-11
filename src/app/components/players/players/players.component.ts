@@ -75,8 +75,9 @@ export class PlayersComponent {
   currentProgram: Signal<Program> = this.programService.activeUserProgram;
   players: Signal<Player[]> = this.playerService.currentProgramPlayers;
   programs: Signal<Program[]> = this.programService.userPrograms;
-  activePrograms = computed(() => this.programs().filter((p) => p.active));
   teams: Signal<Team[]> = this.teamService.currentProgramTeams;
+
+  activePrograms = computed(() => this.programs().filter((p) => p.active));
 
   nextTryoutNumber: Signal<string> = computed(() => {
     const players = this.players().filter((player) => player.tryoutNumber);
@@ -120,7 +121,14 @@ export class PlayersComponent {
       return players;
     }
   );
+
   playerCount = computed(() => this.filteredPlayers().length);
+
+  selection = {} as { [key: string]: boolean };
+
+  public get checkedBox(): boolean {
+    return this.assignCheckboxes().some((checkbox) => checkbox.checked);
+  }
 
   sortPlayers(e: { active: string; direction: string }): void {
     this.sortField.set(e.active);
@@ -138,13 +146,9 @@ export class PlayersComponent {
   }
 
   getCheckedPlayers(): string[] {
-    const checkedPlayers: string[] = [];
-    this.assignCheckboxes().forEach((checkbox, index) => {
-      if (checkbox.checked) {
-        checkedPlayers.push(this.players()[index].id);
-      }
-    });
-    return checkedPlayers;
+    return this.players()
+      .filter((player) => this.selection[player.id])
+      .map((player) => player.id);
   }
 
   onRowClick(player: Player): void {
@@ -194,13 +198,14 @@ export class PlayersComponent {
       },
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirm) => {
+    dialogRef.afterClosed().subscribe(async (confirm) => {
       if (confirm) {
         this.loading.loadingOn();
         const playerIds = this.getCheckedPlayers();
-        this.playerService
+        await this.playerService
           .addPlayersToProgram(this.currentProgram().id, playerIds)
           .then(() => {
+            this.selection = {};
             this.snackBar.open(
               `Selected players assigned to ${this.currentProgram().name}`,
               'Close'

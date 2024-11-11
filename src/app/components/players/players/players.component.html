@@ -61,7 +61,7 @@
       mat-raised-button
       class="btn-primary"
       (click)="assignPlayers()"
-      [disabled]="getCheckedPlayers().length === 0"
+      [disabled]="!checkedBox"
     >
       Assign Selected Players
     </button>
@@ -175,6 +175,7 @@
             #assignCheckbox
             [class.hidden]="!!player.programRef"
             (click)="$event.stopPropagation()"
+            [(ngModel)]="selection[player.id]"
           ></mat-checkbox>
         </td>
       </ng-container>
